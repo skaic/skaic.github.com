@@ -1,0 +1,7 @@
+---
+layout: post
+title: "测试"
+date: 2012-02-22 10:33
+comments: true
+categories: 
+---
