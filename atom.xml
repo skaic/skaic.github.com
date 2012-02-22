@@ -4,7 +4,7 @@
   <title><![CDATA[My Octopress Blog]]></title>
   <link href="http://skaic.github.com/atom.xml" rel="self"/>
   <link href="http://skaic.github.com/"/>
-  <updated>2012-02-22T15:25:31+08:00</updated>
+  <updated>2012-02-22T15:53:00+08:00</updated>
   <id>http://skaic.github.com/</id>
   <author>
     <name><![CDATA[sk.c]]></name>
@@ -18,7 +18,7 @@
     <link href="http://skaic.github.com/blog/2012/02/22/ce-shi/"/>
     <updated>2012-02-22T10:33:00+08:00</updated>
     <id>http://skaic.github.com/blog/2012/02/22/ce-shi</id>
-    <content type="html"><![CDATA[
+    <content type="html"><![CDATA[<p>测试测试</p>
 ]]></content>
   </entry>
   
