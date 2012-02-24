@@ -4,7 +4,7 @@
   <title><![CDATA[sk's Blog]]></title>
   <link href="http://skaic.github.com/atom.xml" rel="self"/>
   <link href="http://skaic.github.com/"/>
-  <updated>2012-02-23T17:21:03+08:00</updated>
+  <updated>2012-02-24T11:41:35+08:00</updated>
   <id>http://skaic.github.com/</id>
   <author>
     <name><![CDATA[sk.c]]></name>
@@ -19,6 +19,21 @@
     <updated>2012-02-22T10:33:00+08:00</updated>
     <id>http://skaic.github.com/blog/2012/02/22/ce-shi</id>
     <content type="html"><![CDATA[<p>测试测试</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &lt;stdio.h&gt;</span>
+</span><span class='line'><span class="kt">int</span> <span class="n">main</span><span class="p">(){</span>
+</span><span class='line'>  <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Hello octopress&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
 ]]></content>
   </entry>
   
