@@ -4,7 +4,7 @@
   <title><![CDATA[sk's Blog]]></title>
   <link href="http://skaic.github.com/atom.xml" rel="self"/>
   <link href="http://skaic.github.com/"/>
-  <updated>2012-03-31T21:21:06+08:00</updated>
+  <updated>2012-03-31T22:25:24+08:00</updated>
   <id>http://skaic.github.com/</id>
   <author>
     <name><![CDATA[sk.c]]></name>
@@ -19,42 +19,18 @@
     <updated>2012-03-31T20:28:00+08:00</updated>
     <id>http://skaic.github.com/blog/2012/03/31/hello-work</id>
     <content type="html"><![CDATA[<p>这是一个已经搭建好很久的博客，只是一直没写过文章，原因很简单，一是懒，二是没啥墨水能下笔。
-直到前两天在宿舍，[@tinpont]突然说要写博客,结果那晚全宿舍人就因这个话题吹水到了3点，囧。
-为了避免第二晚再度引起这个话题导致又没得睡觉，隔天我们就果断买域名搭博客。
+直到前两天在宿舍，<a href="http://www.tinpont.com/">@tinpont</a> 突然说要写博客,结果那晚全宿舍人就因这个话题吹水到了3点，囧。</p>
+
+<p>为了避免第二晚再度引起这个话题导致又没得睡觉，隔天我们就果断买域名搭博客。
 于是又点燃了我写博客的动力。</p>
 
-<p>顺手在这偷偷链上我3个室友的博客，[@tinpont],[@scant],[@NewBie],求互粉呢=.=</p>
+<p>在这,偷偷链上我3个室友的博客，<a href="http://www.tinpont.com/">@tinpont</a> , <a href="http://www.schance.com/">@scant</a> , <a href="http://www.jqyang.com/">@NewBie</a> 求互粉=.=</p>
 
-<p>好吧，说说这个博客，这篇博文的标题已经出卖了我是个程序员这个事实，我也只好认了。
-我常听说程序员都得写写神马博客的，于是我也跟着写写,希望那一天也能做个合格的程序员。</p>
+<p>好吧，说说这个博客，这篇博文的标题已经出卖了我是个程序员这个事实，我也只好认了。我常听说程序员都得写写神马博客的，于是我也跟着写写,希望那一天也能做个合格的程序员。</p>
 
 <p>最后的最后，我还想说一句:</p>
 
 <h1>Hello Word!</h1>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[测试]]></title>
-    <link href="http://skaic.github.com/blog/2012/02/22/ce-shi/"/>
-    <updated>2012-02-22T10:33:00+08:00</updated>
-    <id>http://skaic.github.com/blog/2012/02/22/ce-shi</id>
-    <content type="html"><![CDATA[<p>测试测试</p>
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &lt;stdio.h&gt;</span>
-</span><span class='line'><span class="kt">int</span> <span class="n">main</span><span class="p">(){</span>
-</span><span class='line'>  <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Hello octopress&quot;</span><span class="p">);</span>
-</span><span class='line'>  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
 ]]></content>
   </entry>
   
