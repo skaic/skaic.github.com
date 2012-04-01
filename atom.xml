@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[sk's Blog]]></title>
-  <link href="http://skaic.github.com/atom.xml" rel="self"/>
-  <link href="http://skaic.github.com/"/>
-  <updated>2012-04-01T11:26:52+08:00</updated>
-  <id>http://skaic.github.com/</id>
+  <title><![CDATA[SK's Blog]]></title>
+  <link href="http://sunkid.me/atom.xml" rel="self"/>
+  <link href="http://sunkid.me/"/>
+  <updated>2012-04-01T15:28:26+08:00</updated>
+  <id>http://sunkid.me/</id>
   <author>
     <name><![CDATA[sk.c]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Hello Work]]></title>
-    <link href="http://skaic.github.com/blog/2012/03/31/hello-work/"/>
+    <link href="http://sunkid.me/blog/2012/03/31/hello-work/"/>
     <updated>2012-03-31T20:28:00+08:00</updated>
-    <id>http://skaic.github.com/blog/2012/03/31/hello-work</id>
+    <id>http://sunkid.me/blog/2012/03/31/hello-work</id>
     <content type="html"><![CDATA[<p>这是一个已经搭建好很久的博客，只是一直没写过文章，原因很简单，一是懒，二是没啥墨水能下笔。
 直到前两天在宿舍，<a href="http://www.tinpont.com/">@tinpont</a> 突然说要写博客,结果那晚全宿舍人就因这个话题吹水到了3点，囧~</p>
 
