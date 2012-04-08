@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: acm | SK's Blog]]></title>
+  <link href="http://sunkid.me/blog/categories/acm/atom.xml" rel="self"/>
+  <link href="http://sunkid.me/"/>
+  <updated>2012-04-08T22:42:47+08:00</updated>
+  <id>http://sunkid.me/</id>
+  <author>
+    <name><![CDATA[sk.c]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[2012 GDIT校内模拟赛]]></title>
+    <link href="http://sunkid.me/blog/2012/04/08/2012-gdit-contest/"/>
+    <updated>2012-04-08T21:09:00+08:00</updated>
+    <id>http://sunkid.me/blog/2012/04/08/2012-gdit-contest</id>
+    <content type="html"><![CDATA[<p>今年的广东省赛提前了一个月在华南农业大学进行，珠海市市赛延迟到5月，不知道今年acm协会是
+怎么安排的-。-</p>
+
+<p>说回来，前几天老师说弄场校内模拟赛测试下，为了公平，这次选题就由不参加的我挑选了。
+比赛题目全部是由杭电的题库选取的，总体说题目还是偏简单的，水分偏多，这是考虑到大一
+的学生接触的时间比较短，所以这套题目应该还算合适的。</p>
+
+<p>下面是这次模拟赛的题解:</p>
+
+<h3>Problem 1001</h3>
+
+<p>题目地址：<a href="http://acm.hdu.edu.cn/showproblem.php?pid=1003">Max Sum</a></p>
+
+<p>这是道经典的动态规划题目，我最初学动态规划完成的就是这道题了，题意是求最大连续子序列和。</p>
+
+<p>状态转移方程是：DP[i] = max{DP[i-1]+data[i],0},最后,DP数组中最大的值就是答案了。</p>
+
+<p>代码：
+``` c Problem 1001</p>
+
+<h1>include&lt;stdio.h></h1>
+
+<h1>include&lt;malloc.h></h1>
+
+<p>int main()
+{</p>
+
+<pre><code>short int a;
+int t,i,x=1,n,max,sum,right,letf,b;
+scanf("%d",&amp;t);
+while(t--)
+{
+    scanf("%d",&amp;n);
+    for(i=b=0,max=-1001,sum=0;i&lt;n;i++)
+    {
+        scanf("%d",&amp;a);
+        if(max&lt;sum+a)
+        {
+            max=sum+a;
+            letf=b;
+            right=i;
+        }
+        sum+=a;
+        if(sum&lt;0)
+        {
+            b=i+1;
+            sum=0;
+        }
+    }
+    printf(t?"Case %d:\n%d %d %d\n\n":"Case %d:\n%d %d %d\n",x++,max,letf+1,right+1);
+}
+return 0;
+</code></pre>
+
+<p>}
+```</p>
+
+<h3>Problem 1002</h3>
+
+<p>题目地址：<a href="http://acm.hdu.edu.cn/showproblem.php?pid=1021">Fibonacci Again</a></p>
+
+<p>这题第一眼看上去很简单，然后发现似乎不对，再想一想发现真的灰常简单，囧~~</p>
+
+<p>不解释，看代码：
+``` c Fibonacci Again</p>
+
+<h1>include &lt;stdio.h></h1>
+
+<p>int main()
+{</p>
+
+<pre><code>int n;
+while(scanf("%d",&amp;n)!=EOF)
+{
+    if((n-2)%4==0) printf("yes\n");
+    else printf("no\n");
+}
+return 0;
+</code></pre>
+
+<p>}
+```</p>
+
+<h3>Problem 1003</h3>
+
+<p>题目地址：<a href="http://acm.hdu.edu.cn/showproblem.php?pid=1005">Number Sequence</a></p>
+
+<p>基础题,字符串匹配,KMP算法. 没做出来的同学可以看看: <a href="http://www.matrix67.com/blog/archives/115">KMP算法详解</a></p>
+
+<p>``` c</p>
+
+<h1>include&lt;stdio.h></h1>
+
+<h1>define MAXN 10001</h1>
+
+<h1>define _match(a,b) ((a)==(b))</h1>
+
+<p>typedef int elem_t;</p>
+
+<p>int pat_match(int ls,elem_t<em> str,int lp,elem_t</em> pat)
+{</p>
+
+<pre><code>int fail[MAXN]={-1},i=0,j;
+for (j=1;j&lt;lp;j++)
+{
+    for (i=fail[j-1];i&gt;=0&amp;&amp;!_match(pat[i+1],pat[j]);i=fail[i]);
+    fail[j]=(_match(pat[i+1],pat[j])?i+1:-1);
+}
+for (i=j=0;i&lt;ls&amp;&amp;j&lt;lp;i++)
+if (_match(str[i],pat[j]))
+j++;
+else if (j)
+j=fail[j-1]+1,i--;
+return j==lp?(i-lp)+1:-1;
+</code></pre>
+
+<p>}  <br/>
+int str[1000000],str1[10001];
+void main()
+{</p>
+
+<pre><code>int n,m,t,i;
+scanf("%d",&amp;t);
+while(t--)
+{
+    scanf("%d%d",&amp;n,&amp;m);
+    for(i=0;i&lt;n;i++)
+        scanf("%d",&amp;str[i]);
+    for(i=0;i&lt;m;i++)
+        scanf("%d",&amp;str1[i]);
+    printf("%d\n",pat_match(n,str,m,str1));
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<h3>Problem 1004</h3>
+
+<p>题目地址：<a href="http://acm.hdu.edu.cn/showproblem.php?pid=1009">FatMouse' Trade</a></p>
+
+<br/>
+
+
+<h4>题意:</h4>
+
+<p>老鼠有M磅猫食。有N个房间，每个房间前有一只猫，房间里有老鼠最喜欢的食品JavaBean,J[i]。
+若要引开猫，必须付出相应的猫食F[i]。当然这只老鼠没必要每次都付出所有的F[i]。若它付出
+F[i]的a%，则得到J[i]的a%。求老鼠能吃到的做多的JavaBean</p>
+
+<br/>
+
+
+<h4>解题思路：</h4>
+
+<p>可以用动态规划解决，用贪心思路也一样可以，而且贪心的思路比较容易想到，大概是这样的：</p>
+
+<p>我们将J[i]/F[i],可以得到这一房间每1猫食可以换取到多少JavaBean。当然，老鼠要优先换取
+j[i]/F[i]比较大的房间的JavaBean。</p>
+
+<h4>代码：</h4>
+
+<p>``` c FatMouse' Trade</p>
+
+<h1>include&lt;stdio.h></h1>
+
+<h1>include&lt;stdlib.h></h1>
+
+<p>typedef struct jf
+{</p>
+
+<pre><code>double j;
+double f;
+double average;
+</code></pre>
+
+<p>}JF;
+int compare(const void <em>a,const void </em>b)
+{</p>
+
+<pre><code>JF *aa=(JF *)a;
+JF *bb=(JF *)b;
+if((aa-&gt;average)&gt;(bb-&gt;average))
+    return -1;
+else if((aa-&gt;average)&lt;(bb-&gt;average))
+     return 1;
+else return 0;
+</code></pre>
+
+<p>}
+int main()
+{</p>
+
+<pre><code>int n,m;
+while(scanf("%d%d",&amp;m,&amp;n)!=EOF&amp;&amp;n!=-1&amp;&amp;m!=-1)
+{
+    JF k[1000];
+    int i;
+    double sum;
+    for(i=0;i&lt;n;i++)
+    {    
+        scanf("%lf %lf",&amp;k[i].j,&amp;k[i].f);
+        k[i].average=k[i].j/k[i].f;
+    }
+    qsort(k,n,sizeof(JF),compare);
+    for(i=0,sum=0;i&lt;n&amp;&amp;m&gt;0;i++)
+    {
+        if(k[i].f&lt;=m)
+        {
+            m-=k[i].f;
+            sum+=k[i].j;
+        }
+        else 
+        {
+            sum+=k[i].average*m;
+            m=0;
+        }
+    }
+    printf("%.3f\n",sum);
+
+}
+return 0;
+</code></pre>
+
+<p>}</p>
+
+<p>```</p>
+
+<h3>Problem 1005</h3>
+
+<p>题目地址：<a href="http://acm.hdu.edu.cn/showproblem.php?pid=1254">推箱子</a></p>
+
+<p>搜索题，但是比普通的搜索会麻烦上一点，你得考虑上箱子能不能被推动的情况，这需要满足些条件。</p>
+
+<ol>
+<li>移动方向前没墙。</li>
+<li>移动方向后没墙。</li>
+<li>人可以走到箱子的后面。（注意判断这个条件）</li>
+</ol>
+
+
+<p>用广度搜索可以找到最少的推动格子数，但是还得用深度搜索去检查人能否走到箱子的后面</p>
+
+<p>这题代码比较长，我没去写，就不提供代码了。</p>
+
+<br/>
+
+
+<h4>好吧，今晚先写到这了，剩下的明天继续吧，回去洗洗睡了。</h4>
+]]></content>
+  </entry>
+  
+</feed>
