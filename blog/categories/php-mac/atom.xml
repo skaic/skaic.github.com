@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[SK's Blog]]></title>
-  <link href="http://sunkid.me/atom.xml" rel="self"/>
+  <title><![CDATA[Category: php,mac | SK's Blog]]></title>
+  <link href="http://sunkid.me/blog/categories/php-mac/atom.xml" rel="self"/>
   <link href="http://sunkid.me/"/>
   <updated>2012-04-08T20:59:03+08:00</updated>
   <id>http://sunkid.me/</id>
@@ -24,7 +24,7 @@
 
 <h3><a href="http://netbeans.org/">NetBeans</a></h3>
 
-<p><img src="http://sunkid.me/images/post/NetBeans.jpg" width="600" height="800"></p>
+<p><img src="/images/post/NetBeans.jpg" width="600" height="800"></p>
 
 <p>比较喜欢NetBeans这款IDE，首先是它并不臃肿，如果你只下载php的开发环境包，整个安装包只有43M。
 然后它的功能也是比较齐全的，基本是够我使用了。不过有个缺陷是它不能查看文件的编码跟转编码</p>
@@ -40,7 +40,7 @@
 
 <h3><a href="http://code.google.com/p/macvim/">MacVim</a></h3>
 
-<p><img src="http://sunkid.me/images/post/MacVim.jpg" width="600" height="800"></p>
+<p><img src="/images/post/MacVim.jpg" width="600" height="800"></p>
 
 <p>mac下的Gvim，平时用来看配置文件，或者只想打开一个代码文件不想开IDE的时候会用到。</p>
 
@@ -48,27 +48,6 @@
  中文-》英文-》中文 这样经常性的切换,会导致多了很多键盘操作。</p>
 
 <h4>开发工具这3个基本就足够了，下一篇会介绍mac下apm的编译安装。</h4>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Hello Work]]></title>
-    <link href="http://sunkid.me/blog/2012/03/31/hello-work/"/>
-    <updated>2012-03-31T20:28:00+08:00</updated>
-    <id>http://sunkid.me/blog/2012/03/31/hello-work</id>
-    <content type="html"><![CDATA[<p>这是一个已经搭建好很久的博客，只是一直没写过文章，原因很简单，一是懒，二是没啥墨水能下笔。
-直到前两天在宿舍，<a href="http://www.tinpont.com/">@tinpont</a> 突然说要写博客,结果那晚全宿舍人就因这个话题吹水到了3点，囧~</p>
-
-<p>为了避免第二晚再度引起这个话题导致又没得睡觉，隔天我们就果断买域名搭博客。
-于是又点燃了我写博客的动力。</p>
-
-<p>在这,偷偷链上我3个室友的博客，<a href="http://www.tinpont.com/">@tinpont</a> , <a href="http://www.schance.com/">@scant</a> , <a href="http://www.jqyang.com/">@NewBie</a> 求互粉=.=</p>
-
-<p>好吧，说说这个博客，这篇博文的标题已经出卖了我是个程序员这个事实，我也只好认了。我常听说程序员都得写写神马博客的，于是我也跟着写写,希望那一天也能做个合格的程序员。</p>
-
-<p>最后的最后，我想说一句:</p>
-
-<h1>Hello Word!</h1>
 ]]></content>
   </entry>
   
