@@ -4,7 +4,7 @@
   <title><![CDATA[Category: acm | SK's Blog]]></title>
   <link href="http://sunkid.me/blog/categories/acm/atom.xml" rel="self"/>
   <link href="http://sunkid.me/"/>
-  <updated>2012-04-08T22:43:51+08:00</updated>
+  <updated>2012-04-09T22:41:14+08:00</updated>
   <id>http://sunkid.me/</id>
   <author>
     <name><![CDATA[sk.c]]></name>
@@ -12,6 +12,170 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[2012 GDIT校内模拟赛(续)]]></title>
+    <link href="http://sunkid.me/blog/2012/04/09/2012-gdit-contest-2/"/>
+    <updated>2012-04-09T19:19:00+08:00</updated>
+    <id>http://sunkid.me/blog/2012/04/09/2012-gdit-contest-2</id>
+    <content type="html"><![CDATA[<p>别的话我就不多说了，接着继续昨晚没写完的题解吧。</p>
+
+<h3>Problem 1006</h3>
+
+<p>题目地址： <a href="http://acm.hdu.edu.cn/showproblem.php?pid=4193">Non-negative Partial Sums</a></p>
+
+<br/>
+
+
+<h4>题意：</h4>
+
+<p>给你一个数组，例:a[0],a[1],...,a[n-1]。要你找出数列a[k],a[k+1],...,a[n-1],a[0],a[1],...,a[k]
+使这个数列的任意前k项和都大于-1。问有多少个这样的数列。</p>
+
+<br/>
+
+
+<h4>题解：</h4>
+
+<p>我们注意下这道题的测试数据，N的范围不是很大( N&lt;10<sup>6</sup> ),所以这道题存在较多的解题方法。</p>
+
+<p>比较常用的有下面2种解法：</p>
+
+<p>一是采用线段树求解，这算法比较高效，时间复杂度为O(N)。
+没看过线段树的童鞋可以参考下这篇文章 <a href="http://hi.baidu.com/alpc62/blog/item/469edeca0043e382c8176875.html">线段树入门</a></p>
+
+<p>用线段数最主要的目的是为了减少计算区间的遍历时间.</p>
+
+<p>还有一直方法是采用单调队列的方法。百度上搜索到的多是这种方法的题解，用单调队列的时间复杂度为O(N*LogN).</p>
+
+<h3>Problem 1007</h3>
+
+<p>题目地址： <a href="http://acm.hdu.edu.cn/showproblem.php?pid=4144">Bacon's Cipher</a></p>
+
+<br/>
+
+
+<h4>题意：</h4>
+
+<p>加密一段字符串，加密方法是这样的，我们先把字符A看为0，B为1，C为2，⋯⋯ 等等。现在，
+我们就可以将字符串的每人字母用数字来代替。接着，我们将每个代表字母的数字都转成
+5位的2进制表示。例如C表示为2代替，转成二进制表示为‘00010’。
+然后，我们用随机的大写字母表示0位，用随机的数字表示1位，则’00010‘（’c'）可以转换成
+ABC1D 或 XJG5P</p>
+
+<p>现在，给出一个加密后的密文，要求你将其解密为明文。</p>
+
+<br/>
+
+
+<h4>题解：</h4>
+
+<p>很简单的题目，只要把题意看懂，我相信大家都能完成。</p>
+
+<p>这道题没啥算法可言，只要先把密文按每5位转换成二进制数，再转换为10进制数，就可以求出
+明文了。</p>
+
+<h3>Problem 1008</h3>
+
+<p>题目地址： <a href="http://acm.hdu.edu.cn/showproblem.php?pid=4143">A Simple Problem</a></p>
+
+<br/>
+
+
+<h4>题意：</h4>
+
+<p>给你一个正整数n，要求你找出一个最小的正整数x ，同时存在一个正整数y可以满足公式：
+y<sup>2</sup> = n + x<sup>2</sup></p>
+
+<br/>
+
+
+<h4>题解：</h4>
+
+<p>这道题目名叫“一道简单的题目”，但看似简单的题目往往就不简单。。看清楚题意后可以很快
+的发现是道数学题，这次一队在最后的时间秒杀了这道题，这位同学的数学应该还是挺不错的。</p>
+
+<p>解题思路大概如下：</p>
+
+<p>先将公式y<sup>2</sup> = n + x<sup>2</sup> 分解为 (y-x)(y+x)=n.然后假设y - x = a,y + x = b. 接着就可以去
+遍历a，时间复杂度为O（TN），可是这种做法会超时。n的范围是（n &lt; 10<sup>9</sup> ）,题目没给出T的范围，
+但T可以猜出T的范围不会小，因为假如T的时间复杂度可以忽略，那这道题目的T 就没有存在意义了。
+所以要找出其他办法。</p>
+
+<p>其实，我们通过均值不等式可以很大程度减少遍历a的次数。首先，对n进行开平方,接着向下开始找因子
+a,找到的第一个a，b就是答案。。</p>
+
+<p>详细代码可以看这里：<a href="http://www.linuxso.com/linuxbiancheng/13773.html">2011百校联动“菜鸟杯”程序设计公开赛</a></p>
+
+<h3>Problem 1009</h3>
+
+<p>题目地址： <a href="http://acm.hdu.edu.cn/showproblem.php?pid=3308">LCIS</a></p>
+
+<br/>
+
+
+<h4>题意：</h4>
+
+<p>给你一个数列。然后进行询问：</p>
+
+<p>U A B：表示用B代替数列中A位置的数（数列从0开始记起）</p>
+
+<p>Q A B：表示输出A到B之间的最长公共上升子序列</p>
+
+<h4>题解：</h4>
+
+<p>经典的题目，LCIS，二年级的同学应该看过，没做出来可能是时间紧或者赛前资料没准备充足。
+资料准备足的话直接抄经典代码就能A过这道题了 =。=</p>
+
+<p>好吧，我有点懒，就直接贴别人写得比较好的详细解看吧（当然，我写的话也不可能写得有人家好）</p>
+
+<p><a href="http://wenku.baidu.com/view/3e78f223aaea998fcc220ea0.html">最长公共上升子序列的O（ n<sup>2</sup> ）算法</a></p>
+
+<h3>Problem 1010</h3>
+
+<p>题目地址： <a href="http://acm.hdu.edu.cn/showproblem.php?pid=1008">Elevator</a></p>
+
+<p>这道题基本所有人都做出来了，大水题，就不费时间写题解了，给个代码凑合下 :)</p>
+
+<p>```c Elevator</p>
+
+<h1>include &lt;stdio.h></h1>
+
+<p>int main()
+{</p>
+
+<pre><code>int n;
+while(scanf("%d",&amp;n)!=EOF&amp;&amp;n!=0)
+{
+    int now=0,next,time=0;
+    while(n--)
+    {
+        scanf("%d",&amp;next);
+        if(next&gt;=now) time+=(next-now)*6+5;
+        else if(next&lt;now) time+=(now-next)*4+5;
+        now=next;
+    }
+    printf("%d\n",time);
+}
+return 0;
+</code></pre>
+
+<p>}
+```</p>
+
+<h3>Problem 1011</h3>
+
+<p>题目地址： <a href="http://acm.hdu.edu.cn/showproblem.php?pid=1532">Drainage Ditches</a></p>
+
+<p>图论中的经典网络流题目，这也是我学网络流的时候完成的第一道题。原题是USACO的题目。。
+按照算法导论的伪代码写就能A过这道题了，也没啥特别要注意的地方。</p>
+
+<br />
+
+
+<h4>刚刚写好后打了常LOL，又10点半了，又该洗洗睡了，安~ 各位ACMer</h4>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[2012 GDIT校内模拟赛]]></title>
