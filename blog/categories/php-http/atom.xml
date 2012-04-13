@@ -4,7 +4,7 @@
   <title><![CDATA[Category: php,http | SK's Blog]]></title>
   <link href="http://sunkid.me/blog/categories/php-http/atom.xml" rel="self"/>
   <link href="http://sunkid.me/"/>
-  <updated>2012-04-13T14:43:17+08:00</updated>
+  <updated>2012-04-13T14:44:38+08:00</updated>
   <id>http://sunkid.me/</id>
   <author>
     <name><![CDATA[sk.c]]></name>
@@ -148,7 +148,7 @@ array(
 <p>//登陆网址
 $loginUrl = "http://www.xxx.com/member/login";
 //网址首页
-$xiamiUrl = "http://www.xxx.com/";
+$Url = "http://www.xxx.com/";
 //签到网址
 $signinUrl = "http://www.xxxx.com/task/signin";</p>
 
@@ -210,7 +210,7 @@ $cookie = "member_auth=" . $member[1];
 curl_setopt($ch, CURLOPT_COOKIE, $cookie);
 
 //设置请求地址    
-curl_setopt($ch, CURLOPT_URL, $xiamiUrl);
+curl_setopt($ch, CURLOPT_URL, $Url);
 
 //发送首页请求
 $res = curl_exec($ch);

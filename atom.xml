@@ -4,7 +4,7 @@
   <title><![CDATA[SK's Blog]]></title>
   <link href="http://sunkid.me/atom.xml" rel="self"/>
   <link href="http://sunkid.me/"/>
-  <updated>2012-04-13T14:43:17+08:00</updated>
+  <updated>2012-04-13T14:44:38+08:00</updated>
   <id>http://sunkid.me/</id>
   <author>
     <name><![CDATA[sk.c]]></name>
@@ -274,7 +274,7 @@
 </span><span class='line'><span class="c1">//登陆网址</span>
 </span><span class='line'><span class="nv">$loginUrl</span> <span class="o">=</span> <span class="s2">&quot;http://www.xxx.com/member/login&quot;</span><span class="p">;</span>
 </span><span class='line'><span class="c1">//网址首页</span>
-</span><span class='line'><span class="nv">$xiamiUrl</span> <span class="o">=</span> <span class="s2">&quot;http://www.xxx.com/&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="nv">$Url</span> <span class="o">=</span> <span class="s2">&quot;http://www.xxx.com/&quot;</span><span class="p">;</span>
 </span><span class='line'><span class="c1">//签到网址</span>
 </span><span class='line'><span class="nv">$signinUrl</span> <span class="o">=</span> <span class="s2">&quot;http://www.xxxx.com/task/signin&quot;</span><span class="p">;</span>
 </span><span class='line'>
@@ -333,7 +333,7 @@
 </span><span class='line'>  <span class="nb">curl_setopt</span><span class="p">(</span><span class="nv">$ch</span><span class="p">,</span> <span class="nx">CURLOPT_COOKIE</span><span class="p">,</span> <span class="nv">$cookie</span><span class="p">);</span>
 </span><span class='line'>
 </span><span class='line'>  <span class="c1">//设置请求地址   </span>
-</span><span class='line'>  <span class="nb">curl_setopt</span><span class="p">(</span><span class="nv">$ch</span><span class="p">,</span> <span class="nx">CURLOPT_URL</span><span class="p">,</span> <span class="nv">$xiamiUrl</span><span class="p">);</span>
+</span><span class='line'>  <span class="nb">curl_setopt</span><span class="p">(</span><span class="nv">$ch</span><span class="p">,</span> <span class="nx">CURLOPT_URL</span><span class="p">,</span> <span class="nv">$Url</span><span class="p">);</span>
 </span><span class='line'>
 </span><span class='line'>  <span class="c1">//发送首页请求</span>
 </span><span class='line'>  <span class="nv">$res</span> <span class="o">=</span> <span class="nb">curl_exec</span><span class="p">(</span><span class="nv">$ch</span><span class="p">);</span>
