@@ -4,7 +4,7 @@
   <title><![CDATA[SK's Blog]]></title>
   <link href="http://sunkid.me/atom.xml" rel="self"/>
   <link href="http://sunkid.me/"/>
-  <updated>2012-04-13T14:18:43+08:00</updated>
+  <updated>2012-04-13T14:26:00+08:00</updated>
   <id>http://sunkid.me/</id>
   <author>
     <name><![CDATA[sk.c]]></name>
@@ -285,7 +285,7 @@
 </span><span class='line'>    <span class="s2">&quot;X-Requested-With: XMLHttpRequest&quot;</span><span class="p">,</span>
 </span><span class='line'>    <span class="s2">&quot;Referer: http://www.xiami.com/&quot;</span><span class="p">,</span>
 </span><span class='line'>    <span class="s2">&quot;Accept-Language: zh-cn&quot;</span><span class="p">,</span>
-</span><span class='line'>    <span class="s2">&quot;Accept-Encoding: gzip, deflate&quot;</span>
+</span><span class='line'>    <span class="s2">&quot;Accept-Encoding:  deflate&quot;</span>
 </span><span class='line'><span class="p">);</span>
 </span><span class='line'>
 </span><span class='line'>

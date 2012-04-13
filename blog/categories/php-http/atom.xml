@@ -4,7 +4,7 @@
   <title><![CDATA[Category: php,http | SK's Blog]]></title>
   <link href="http://sunkid.me/blog/categories/php-http/atom.xml" rel="self"/>
   <link href="http://sunkid.me/"/>
-  <updated>2012-04-13T14:18:43+08:00</updated>
+  <updated>2012-04-13T14:26:00+08:00</updated>
   <id>http://sunkid.me/</id>
   <author>
     <name><![CDATA[sk.c]]></name>
@@ -160,7 +160,7 @@ $headre = array(</p>
 "X-Requested-With: XMLHttpRequest",
 "Referer: http://www.xiami.com/",
 "Accept-Language: zh-cn",
-"Accept-Encoding: gzip, deflate"
+"Accept-Encoding:  deflate"
 </code></pre>
 
 <p>);</p>
