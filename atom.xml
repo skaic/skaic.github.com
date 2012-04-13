@@ -4,7 +4,7 @@
   <title><![CDATA[SK's Blog]]></title>
   <link href="http://sunkid.me/atom.xml" rel="self"/>
   <link href="http://sunkid.me/"/>
-  <updated>2012-04-13T14:41:05+08:00</updated>
+  <updated>2012-04-13T14:43:17+08:00</updated>
   <id>http://sunkid.me/</id>
   <author>
     <name><![CDATA[sk.c]]></name>
@@ -33,7 +33,7 @@
 <br/>
 
 
-<p>首先，分析下虾米的登陆页面和签到页面：</p>
+<p>首先，分析下某网站的登陆页面和签到页面：</p>
 
 <h4>登陆页面：</h4>
 
