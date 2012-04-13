@@ -300,7 +300,6 @@
 <span class='line-number'>111</span>
 <span class='line-number'>112</span>
 <span class='line-number'>113</span>
-<span class='line-number'>114</span>
 </pre></td><td class='code'><pre><code class='php'><span class='line'><span class="cp">&lt;?php</span>
 </span><span class='line'>
 </span><span class='line'><span class="c1">//配置文件，填写用户密码信息</span>
@@ -327,13 +326,12 @@
 </span><span class='line'><span class="nv">$signinUrl</span> <span class="o">=</span> <span class="s2">&quot;http://www.xxxx.com/task/signin&quot;</span><span class="p">;</span>
 </span><span class='line'>
 </span><span class='line'><span class="c1">//http头部，模拟浏览器行为</span>
-</span><span class='line'><span class="nv">$headre</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+</span><span class='line'><span class="nv">$header</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
 </span><span class='line'>    <span class="s2">&quot;Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_3) AppleWebKit/534.55.3 (KHTML, like Gecko) Version/5.1.5 Safari/534.55.3&quot;</span><span class="p">,</span>
 </span><span class='line'>    <span class="s2">&quot;Origin: http://www.xxxx.com&quot;</span><span class="p">,</span>
 </span><span class='line'>    <span class="s2">&quot;X-Requested-With: XMLHttpRequest&quot;</span><span class="p">,</span>
 </span><span class='line'>    <span class="s2">&quot;Referer: http://www.xxxx.com/&quot;</span><span class="p">,</span>
-</span><span class='line'>    <span class="s2">&quot;Accept-Language: zh-cn&quot;</span><span class="p">,</span>
-</span><span class='line'>    <span class="s2">&quot;Accept-Encoding:  deflate&quot;</span>
+</span><span class='line'>    <span class="s2">&quot;Accept-Language: zh-cn&quot;</span>
 </span><span class='line'><span class="p">);</span>
 </span><span class='line'>
 </span><span class='line'>

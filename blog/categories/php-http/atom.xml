@@ -4,7 +4,7 @@
   <title><![CDATA[Category: php,http | SK's Blog]]></title>
   <link href="http://sunkid.me/blog/categories/php-http/atom.xml" rel="self"/>
   <link href="http://sunkid.me/"/>
-  <updated>2012-04-13T14:44:38+08:00</updated>
+  <updated>2012-04-13T14:51:01+08:00</updated>
   <id>http://sunkid.me/</id>
   <author>
     <name><![CDATA[sk.c]]></name>
@@ -153,14 +153,13 @@ $Url = "http://www.xxx.com/";
 $signinUrl = "http://www.xxxx.com/task/signin";</p>
 
 <p>//http头部，模拟浏览器行为
-$headre = array(</p>
+$header = array(</p>
 
 <pre><code>"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_3) AppleWebKit/534.55.3 (KHTML, like Gecko) Version/5.1.5 Safari/534.55.3",
 "Origin: http://www.xxxx.com",
 "X-Requested-With: XMLHttpRequest",
 "Referer: http://www.xxxx.com/",
-"Accept-Language: zh-cn",
-"Accept-Encoding:  deflate"
+"Accept-Language: zh-cn"
 </code></pre>
 
 <p>);</p>
