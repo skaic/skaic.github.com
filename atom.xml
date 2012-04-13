@@ -4,7 +4,7 @@
   <title><![CDATA[SK's Blog]]></title>
   <link href="http://sunkid.me/atom.xml" rel="self"/>
   <link href="http://sunkid.me/"/>
-  <updated>2012-04-11T11:56:19+08:00</updated>
+  <updated>2012-04-13T14:13:54+08:00</updated>
   <id>http://sunkid.me/</id>
   <author>
     <name><![CDATA[sk.c]]></name>
@@ -12,6 +12,371 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[php模拟数据包——自动签到]]></title>
+    <link href="http://sunkid.me/blog/2012/04/13/fake-http/"/>
+    <updated>2012-04-13T11:38:00+08:00</updated>
+    <id>http://sunkid.me/blog/2012/04/13/fake-http</id>
+    <content type="html"><![CDATA[<p>最近几个室友染上研究自动签到机的恶习。</p>
+
+<p>其中包括有用C写socket 接发伪http包的<a href="http://www.tinpont.com/">@tinpont</a></p>
+
+<p>有用javascript 在浏览器做类似XSS的自动登陆签到的<a href="http://www.jqyang.com/">@NewBie</a></p>
+
+<p>还有用au3 做模拟点击来签到的<a href="http://www.schance.com/">@scant</a></p>
+
+<p>(顺便在这鄙视上面2个做了后不写出来分享的童鞋)</p>
+
+<p>不甘落后，我也写个php版本的伪http包自动签到，目标是<a href="http://www.xiami.com/">虾米</a>。。这样妈妈再也不怕我没红包听音乐了：）</p>
+
+<br/>
+
+
+<p>首先，分析下虾米的登陆页面和签到页面：</p>
+
+<h4>登陆页面：</h4>
+
+<p><img src="http://sunkid.me/images/post/fake_http_1.jpg" width="600" height="800"></p>
+
+<p>很容易我们已经获得了登陆的地址，接着开始找签到的地址。</p>
+
+<p>发现签到的按钮上是一段这样子的a连接</p>
+
+<figure class='code'><figcaption><span>check_in_a </span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;a</span> <span class="na">class=</span><span class="s">&quot;checkin text&quot;</span> <span class="na">id=</span><span class="s">&quot;check_in&quot;</span> <span class="na">href=</span><span class="s">&quot;javascript:;&quot;</span> <span class="na">title=</span><span class="s">&quot;&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>  签到 得红包
+</span><span class='line'>  <span class="nt">&lt;span&gt;</span>Check in<span class="nt">&lt;/span&gt;</span>
+</span><span class='line'><span class="nt">&lt;/a&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>没有直接写明链接地址，于是从js入手找，方法很简单，在虾米主页的代码上搜索这个按钮的id&#8221;check_in&#8221;</p>
+
+<p>很快可以找到该id绑定了一个点击触发函数,代码如下：</p>
+
+<figure class='code'><figcaption><span>check_in_js</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$</span><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>      <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#check_in&quot;</span><span class="p">).</span><span class="nx">click</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>          <span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+</span><span class='line'>          <span class="nx">$</span><span class="p">(</span><span class="k">this</span><span class="p">).</span><span class="nx">unbind</span><span class="p">(</span><span class="s1">&#39;click&#39;</span><span class="p">);</span>
+</span><span class='line'>          <span class="c1">//这个post的地址无疑就是签到的地址了</span>
+</span><span class='line'>          <span class="nx">$</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="s1">&#39;/task/signin&#39;</span><span class="p">,{},</span><span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>              <span class="nx">paint</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+</span><span class='line'>              <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#check_in&quot;</span><span class="p">).</span><span class="nx">click</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+</span><span class='line'>                  <span class="nx">unpaint</span><span class="p">();</span>
+</span><span class='line'>              <span class="p">});</span>
+</span><span class='line'>          <span class="p">});</span>
+</span><span class='line'>      <span class="p">});</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这时，两个主要的地址我们已经找出来了。</p>
+
+<p>紧接着，通过浏览器登陆虾米，正常签到。在这个过程的同时，我们需要截获登陆和签到的http数据包.
+这需要借助一些嗅探器，我在mac下用的是<a href="http://www.wireshark.org/download.html">Wireshark</a></p>
+
+<p>这是截获到登陆请求的数据包：</p>
+
+<p><img src="http://sunkid.me/images/post/fake_http_2.jpg" width="600" height="800"></p>
+
+<p>这是登陆成功后返回的数据包:</p>
+
+<p><img src="http://sunkid.me/images/post/fake_http_3.jpg" width="600" height="800"></p>
+
+<p>请求的数据包我们安着post的值封装发过去就可以了，这里我们主要分析下成功返回的数据包：</p>
+
+<p>首先返回的http状态是302重定向，带一个Set-Cookie：member_auth=xxxxxx<br/>
+我们第一次登陆要抓取的就是这个member_auth的值。</p>
+
+<p>我们接着看签到时候http包的行为</p>
+
+<p>截获到签到请求的数据包：</p>
+
+<p><img src="http://sunkid.me/images/post/fake_http_4.jpg" width="600" height="800"></p>
+
+<p>图片中的cookie只显示了一部分，附上完整的cookie值：</p>
+
+<figure class='code'><figcaption><span>cookie</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="nl">Cookie:</span><span class="n">cnzz_a921634</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="n">cnzz_eid</span><span class="o">=</span><span class="mi">22096341</span><span class="o">-</span><span class="mi">1334189912</span><span class="o">-</span><span class="n">http</span><span class="o">%</span><span class="mi">3</span><span class="n">A</span><span class="c1">//www.xiami.com/member/logout; ltime=1334193113668; rtime=0; sin921634=none; __gads=ID=7c2eb69c29c523a2:T=1334193113:S=ALNI_Mb0TRs4TR3yexCHEW4kFeWwZLI1Zw; index_logined_hotmusic_tab=1; __utma=251084815.740794992.1334193113.1334193113.1334193113.1; __utmb=251084815.1.10.1334193113; __utmc=251084815; __utmz=251084815.1334193113.1.1.utmcsr=(direct)|utmccn=(direct)|utmcmd=(none); t_sign_auth=1; member_auth=7hjWn1eRWGaWJqK5kKzM%2BxaZJQkiW3UWiEO3hkVZTwkiFLpXlhVEuW%2BSpOTZz4%2BiLYNKMlw</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>呃，这看上去有点多，而且这些数据不像是从服务器通过set-cookie过来的，猜测是通过js设置的cookie值。
+我选取了&#8217;__utmb&#8217;对在虾米页面上的js进行搜索，结果在”http://www.google-analytics.com/ga.js“发现了这个值。</p>
+
+<p>到这里，我们知道这个是google analytics设置的cookie，对虾米的签到是不会影响。
+通过继续分析，我们可以排除大部分cookie,剩下的cookie值就是我们需要伪造的了：</p>
+
+<figure class='code'><figcaption><span>cookie</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="nl">Cookie:</span><span class="n">index_logined_hotmusic_tab</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="n">t_sign_auth</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span> <span class="n">member_auth</span><span class="o">=</span><span class="mi">7</span><span class="n">hjWn1eRWGaWJqK5kKzM</span><span class="o">%</span><span class="mi">2</span><span class="n">BxaZJQkiW3UWiEO3hkVZTwkiFLpXlhVEuW</span><span class="o">%</span><span class="mi">2</span><span class="n">BSpOTZz4</span><span class="o">%</span><span class="mi">2</span><span class="n">BiLYNKMlw</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>通过继续对页面分析，发现，index_logined_hotmusic_tab的值在虾米js中设置为常数1,t_sign_auth的值在打开首页的时候通过set-cookie得到。</p>
+
+<p>这时，我们只需要截获并伪造这三个cookie,就可以签到模拟请求了 ：）</p>
+
+<p>下面截获到签到请求成功返回的数据包：</p>
+
+<p><img src="http://sunkid.me/images/post/fake_http_5.jpg" width="600" height="800"></p>
+
+<p>到此，我们的http数据包就分析结束了，接下来就是编码的工作了,下面附上源码。</p>
+
+<figure class='code'><figcaption><span>xiamiSignin</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+<span class='line-number'>101</span>
+<span class='line-number'>102</span>
+<span class='line-number'>103</span>
+<span class='line-number'>104</span>
+<span class='line-number'>105</span>
+<span class='line-number'>106</span>
+<span class='line-number'>107</span>
+<span class='line-number'>108</span>
+<span class='line-number'>109</span>
+<span class='line-number'>110</span>
+<span class='line-number'>111</span>
+<span class='line-number'>112</span>
+<span class='line-number'>113</span>
+<span class='line-number'>114</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="cp">&lt;?php</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">//配置文件，填写用户密码信息</span>
+</span><span class='line'><span class="nv">$logins</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+</span><span class='line'>    <span class="k">array</span><span class="p">(</span>
+</span><span class='line'>  <span class="s2">&quot;email&quot;</span> <span class="o">=&gt;</span> <span class="s1">&#39;xxxxx@qq.com&#39;</span><span class="p">,</span>
+</span><span class='line'>  <span class="s2">&quot;password&quot;</span> <span class="o">=&gt;</span> <span class="s1">&#39;xxxx&#39;</span><span class="p">,</span>
+</span><span class='line'>    <span class="p">),</span>
+</span><span class='line'>    <span class="k">array</span><span class="p">(</span>
+</span><span class='line'>  <span class="s2">&quot;email&quot;</span> <span class="o">=&gt;</span> <span class="s1">&#39;xxxx@qq.com&#39;</span><span class="p">,</span>
+</span><span class='line'>  <span class="s2">&quot;password&quot;</span> <span class="o">=&gt;</span> <span class="s1">&#39;xxxx&#39;</span><span class="p">,</span>
+</span><span class='line'>    <span class="p">),</span>
+</span><span class='line'>    <span class="k">array</span><span class="p">(</span>
+</span><span class='line'>  <span class="s2">&quot;email&quot;</span> <span class="o">=&gt;</span> <span class="s1">&#39;xxx@qq.com&#39;</span><span class="p">,</span>
+</span><span class='line'>  <span class="s2">&quot;password&quot;</span> <span class="o">=&gt;</span> <span class="s1">&#39;xxxx&#39;</span><span class="p">,</span>
+</span><span class='line'>    <span class="p">)</span>
+</span><span class='line'><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">//虾米登陆网址</span>
+</span><span class='line'><span class="nv">$loginUrl</span> <span class="o">=</span> <span class="s2">&quot;http://www.xiami.com/member/login&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="c1">//虾米网址</span>
+</span><span class='line'><span class="nv">$xiamiUrl</span> <span class="o">=</span> <span class="s2">&quot;http://www.xiami.com/&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="c1">//虾米签到网址</span>
+</span><span class='line'><span class="nv">$signinUrl</span> <span class="o">=</span> <span class="s2">&quot;http://www.xiami.com/task/signin&quot;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">//http头部，模拟浏览器行为</span>
+</span><span class='line'><span class="nv">$headre</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+</span><span class='line'>    <span class="s2">&quot;Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_3) AppleWebKit/534.55.3 (KHTML, like Gecko) Version/5.1.5 Safari/534.55.3&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s2">&quot;Origin: http://www.xiami.com&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s2">&quot;X-Requested-With: XMLHttpRequest&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s2">&quot;Referer: http://www.xiami.com/&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s2">&quot;Accept-Language: zh-cn&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s2">&quot;Accept-Encoding: gzip, deflate&quot;</span>
+</span><span class='line'><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="k">foreach</span> <span class="p">(</span><span class="nv">$logins</span> <span class="k">as</span> <span class="nv">$login</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nv">$email</span> <span class="o">=</span> <span class="nv">$login</span><span class="p">[</span><span class="s1">&#39;email&#39;</span><span class="p">];</span>
+</span><span class='line'>  <span class="nv">$password</span> <span class="o">=</span> <span class="nv">$login</span><span class="p">[</span><span class="s1">&#39;password&#39;</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">//模拟post数据包</span>
+</span><span class='line'>  <span class="nv">$postDate</span> <span class="o">=</span> <span class="s2">&quot;email=</span><span class="si">$email</span><span class="s2">&amp;password=</span><span class="si">$password</span><span class="s2">&amp;autologin=1&amp;submit=%E7%99%BB+%E5%BD%95&quot;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">//初始化CURL</span>
+</span><span class='line'>  <span class="nv">$ch</span> <span class="o">=</span> <span class="nb">curl_init</span><span class="p">();</span>
+</span><span class='line'>  <span class="nb">curl_setopt</span><span class="p">(</span><span class="nv">$ch</span><span class="p">,</span> <span class="nx">CURLOPT_POST</span><span class="p">,</span> <span class="k">TRUE</span><span class="p">);</span>
+</span><span class='line'>  <span class="nb">curl_setopt</span><span class="p">(</span><span class="nv">$ch</span><span class="p">,</span> <span class="nx">CURLOPT_HEADER</span><span class="p">,</span> <span class="k">TRUE</span><span class="p">);</span>
+</span><span class='line'>  <span class="nb">curl_setopt</span><span class="p">(</span><span class="nv">$ch</span><span class="p">,</span> <span class="nx">CURLOPT_RETURNTRANSFER</span><span class="p">,</span> <span class="k">TRUE</span><span class="p">);</span>
+</span><span class='line'>  <span class="nb">curl_setopt</span><span class="p">(</span><span class="nv">$ch</span><span class="p">,</span> <span class="nx">CURLINFO_HEADER_OUT</span><span class="p">,</span> <span class="k">TRUE</span><span class="p">);</span>
+</span><span class='line'>  <span class="nb">curl_setopt</span><span class="p">(</span><span class="nv">$ch</span><span class="p">,</span> <span class="nx">CURLOPT_HTTPHEADER</span><span class="p">,</span> <span class="nv">$headre</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">//设置post数据包</span>
+</span><span class='line'>  <span class="nb">curl_setopt</span><span class="p">(</span><span class="nv">$ch</span><span class="p">,</span> <span class="nx">CURLOPT_POSTFIELDS</span><span class="p">,</span> <span class="nv">$postDate</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="cm">/*  * *********************第一次发送模拟数据包请求*************************** */</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">//设置请求地址   </span>
+</span><span class='line'>  <span class="nb">curl_setopt</span><span class="p">(</span><span class="nv">$ch</span><span class="p">,</span> <span class="nx">CURLOPT_URL</span><span class="p">,</span> <span class="nv">$loginUrl</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">//发送登陆请求</span>
+</span><span class='line'>  <span class="nv">$res</span> <span class="o">=</span> <span class="nb">curl_exec</span><span class="p">(</span><span class="nv">$ch</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">//读取member_auth值</span>
+</span><span class='line'>  <span class="nb">preg_match</span><span class="p">(</span><span class="s1">&#39;/^Set-Cookie: member_auth=(.*?);/m&#39;</span><span class="p">,</span> <span class="nv">$res</span><span class="p">,</span> <span class="nv">$member</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">//判断登陆是否成功</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$member</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span> <span class="p">{</span>
+</span><span class='line'>      <span class="k">echo</span> <span class="s2">&quot;[Error]:Login false(</span><span class="si">$email</span><span class="s2">)&quot;</span><span class="p">;</span>
+</span><span class='line'>      <span class="k">continue</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">//模拟cookie数据</span>
+</span><span class='line'>  <span class="nv">$cookie</span> <span class="o">=</span> <span class="s2">&quot;member_auth=&quot;</span> <span class="o">.</span> <span class="nv">$member</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="cm">/*  * *********************第二次发送模拟数据包请求*************************** */</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">//设置cookie数据</span>
+</span><span class='line'>  <span class="nb">curl_setopt</span><span class="p">(</span><span class="nv">$ch</span><span class="p">,</span> <span class="nx">CURLOPT_COOKIE</span><span class="p">,</span> <span class="nv">$cookie</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">//设置请求地址   </span>
+</span><span class='line'>  <span class="nb">curl_setopt</span><span class="p">(</span><span class="nv">$ch</span><span class="p">,</span> <span class="nx">CURLOPT_URL</span><span class="p">,</span> <span class="nv">$xiamiUrl</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">//发送首页请求</span>
+</span><span class='line'>  <span class="nv">$res</span> <span class="o">=</span> <span class="nb">curl_exec</span><span class="p">(</span><span class="nv">$ch</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">//读取t_sign_auth值</span>
+</span><span class='line'>  <span class="nb">preg_match</span><span class="p">(</span><span class="s1">&#39;/^Set-Cookie: t_sign_auth=(.*?);/m&#39;</span><span class="p">,</span> <span class="nv">$res</span><span class="p">,</span> <span class="nv">$t_sign</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">//判断登陆是否成功</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$t_sign</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span> <span class="p">{</span>
+</span><span class='line'>      <span class="k">echo</span> <span class="s2">&quot;[Error]: get t_sign_auth is false(</span><span class="si">$email</span><span class="s2">)&quot;</span><span class="p">;</span>
+</span><span class='line'>      <span class="k">continue</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">//拼接cookie数据</span>
+</span><span class='line'>  <span class="nv">$cookie</span> <span class="o">=</span> <span class="nv">$cookie</span> <span class="o">.</span> <span class="s2">&quot;;t_sign_auth=</span><span class="si">$t_sign[1]</span><span class="s2">;index_logined_hotmusic_tab=1&quot;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="cm">/*  * *********************第三次发送模拟数据包请求*************************** */</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">//设置cookie数据</span>
+</span><span class='line'>  <span class="nb">curl_setopt</span><span class="p">(</span><span class="nv">$ch</span><span class="p">,</span> <span class="nx">CURLOPT_COOKIE</span><span class="p">,</span> <span class="nv">$cookie</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">//设置请求地址   </span>
+</span><span class='line'>  <span class="nb">curl_setopt</span><span class="p">(</span><span class="nv">$ch</span><span class="p">,</span> <span class="nx">CURLOPT_URL</span><span class="p">,</span> <span class="nv">$signinUrl</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">//发送首页请求</span>
+</span><span class='line'>  <span class="nv">$res</span> <span class="o">=</span> <span class="nb">curl_exec</span><span class="p">(</span><span class="nv">$ch</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">echo</span> <span class="s2">&quot;user:</span><span class="si">$email</span><span class="s2"> is ok!&lt;br/&gt;&quot;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">//关闭连接</span>
+</span><span class='line'>  <span class="nb">curl_close</span><span class="p">(</span><span class="nv">$ch</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="cp">?&gt;</span><span class="x"></span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>最后的最后，有一个需要强调的是:</p>
+
+<h3>请不要转载，不要转载，不要转载，如果转载，请不要注明出处 -。-|||</h3>
+
+<p>好了，全文完！</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[2012 GDIT校内模拟赛(续)]]></title>
