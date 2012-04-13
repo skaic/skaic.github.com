@@ -72,7 +72,7 @@
 
 <p>(顺便在这鄙视上面2个做了后不写出来分享的童鞋)</p>
 
-<p>不甘落后，我也写个php版本的伪http包自动签到，目标是<a href="http://www.xiami.com/">虾米</a>。。这样妈妈再也不怕我没红包听音乐了：）</p>
+<p>不甘落后，我也写个php版本的伪http包自动签到：）</p>
 
 <br/>
 
@@ -92,13 +92,13 @@
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
 </pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;a</span> <span class="na">class=</span><span class="s">&quot;checkin text&quot;</span> <span class="na">id=</span><span class="s">&quot;check_in&quot;</span> <span class="na">href=</span><span class="s">&quot;javascript:;&quot;</span> <span class="na">title=</span><span class="s">&quot;&quot;</span><span class="nt">&gt;</span>
-</span><span class='line'>  签到 得红包
+</span><span class='line'>  签到
 </span><span class='line'>  <span class="nt">&lt;span&gt;</span>Check in<span class="nt">&lt;/span&gt;</span>
 </span><span class='line'><span class="nt">&lt;/a&gt;</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>没有直接写明链接地址，于是从js入手找，方法很简单，在虾米主页的代码上搜索这个按钮的id&#8221;check_in&#8221;</p>
+<p>没有直接写明链接地址，于是从js入手找，方法很简单，在主页的代码上搜索这个按钮的id &#8220;check_in&#8221;</p>
 
 <p>很快可以找到该id绑定了一个点击触发函数,代码如下：</p>
 
@@ -133,7 +133,7 @@
 
 <p>这时，两个主要的地址我们已经找出来了。</p>
 
-<p>紧接着，通过浏览器登陆虾米，正常签到。在这个过程的同时，我们需要截获登陆和签到的http数据包.
+<p>紧接着，通过浏览器登陆网站，正常签到。在这个过程的同时，我们需要截获登陆和签到的http数据包.
 这需要借助一些嗅探器，我在mac下用的是<a href="http://www.wireshark.org/download.html">Wireshark</a></p>
 
 <p>这是截获到登陆请求的数据包：</p>
@@ -158,22 +158,22 @@
 <p>图片中的cookie只显示了一部分，附上完整的cookie值：</p>
 
 <figure class='code'><figcaption><span>cookie</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="nl">Cookie:</span><span class="n">cnzz_a921634</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="n">cnzz_eid</span><span class="o">=</span><span class="mi">22096341</span><span class="o">-</span><span class="mi">1334189912</span><span class="o">-</span><span class="n">http</span><span class="o">%</span><span class="mi">3</span><span class="n">A</span><span class="c1">//www.xiami.com/member/logout; ltime=1334193113668; rtime=0; sin921634=none; __gads=ID=7c2eb69c29c523a2:T=1334193113:S=ALNI_Mb0TRs4TR3yexCHEW4kFeWwZLI1Zw; index_logined_hotmusic_tab=1; __utma=251084815.740794992.1334193113.1334193113.1334193113.1; __utmb=251084815.1.10.1334193113; __utmc=251084815; __utmz=251084815.1334193113.1.1.utmcsr=(direct)|utmccn=(direct)|utmcmd=(none); t_sign_auth=1; member_auth=7hjWn1eRWGaWJqK5kKzM%2BxaZJQkiW3UWiEO3hkVZTwkiFLpXlhVEuW%2BSpOTZz4%2BiLYNKMlw</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="nl">Cookie:</span><span class="n">cnzz_a921634</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="n">ltime</span><span class="o">=</span><span class="mi">1334193113668</span><span class="p">;</span> <span class="n">rtime</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="n">sin921634</span><span class="o">=</span><span class="n">none</span><span class="p">;</span> <span class="n">__gads</span><span class="o">=</span><span class="n">ID</span><span class="o">=</span><span class="mi">7</span><span class="n">c2eb69c29c523a2</span><span class="o">:</span><span class="n">T</span><span class="o">=</span><span class="mi">1334193113</span><span class="o">:</span><span class="n">S</span><span class="o">=</span><span class="n">ALNI_Mb0TRs4TR3yexCHEW4kFeWwZLI1Zw</span><span class="p">;</span> <span class="n">index_logined_hotmusic_tab</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span> <span class="n">__utma</span><span class="o">=</span><span class="mf">251084815.740794992.1334193113.1334193113.1334193113.1</span><span class="p">;</span> <span class="n">__utmb</span><span class="o">=</span><span class="mf">251084815.1.10.1334193113</span><span class="p">;</span> <span class="n">__utmc</span><span class="o">=</span><span class="mi">251084815</span><span class="p">;</span> <span class="n">__utmz</span><span class="o">=</span><span class="mf">251084815.1334193113.1.1</span><span class="p">.</span><span class="n">utmcsr</span><span class="o">=</span><span class="p">(</span><span class="n">direct</span><span class="p">)</span><span class="o">|</span><span class="n">utmccn</span><span class="o">=</span><span class="p">(</span><span class="n">direct</span><span class="p">)</span><span class="o">|</span><span class="n">utmcmd</span><span class="o">=</span><span class="p">(</span><span class="n">none</span><span class="p">);</span> <span class="n">t_sign_auth</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span> <span class="n">member_auth</span><span class="o">=</span><span class="mi">7</span><span class="n">hjWn1eRWGaWJqK5kKzM</span><span class="o">%</span><span class="mi">2</span><span class="n">BxaZJQkiW3UWiEO3hkVZTwkiFLpXlhVEuW</span><span class="o">%</span><span class="mi">2</span><span class="n">BSpOTZz4</span><span class="o">%</span><span class="mi">2</span><span class="n">BiLYNKMlw</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
 <p>呃，这看上去有点多，而且这些数据不像是从服务器通过set-cookie过来的，猜测是通过js设置的cookie值。
-我选取了&#8217;__utmb&#8217;对在虾米页面上的js进行搜索，结果在”http://www.google-analytics.com/ga.js“发现了这个值。</p>
+我选取了&#8217;__utmb&#8217;对在页面上的js进行搜索，结果在”http://www.google-analytics.com/ga.js“发现了这个值。</p>
 
-<p>到这里，我们知道这个是google analytics设置的cookie，对虾米的签到是不会影响。
+<p>到这里，我们知道这个是google analytics设置的cookie，对该网页的签到是不会影响。
 通过继续分析，我们可以排除大部分cookie,剩下的cookie值就是我们需要伪造的了：</p>
 
 <figure class='code'><figcaption><span>cookie</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="nl">Cookie:</span><span class="n">index_logined_hotmusic_tab</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="n">t_sign_auth</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span> <span class="n">member_auth</span><span class="o">=</span><span class="mi">7</span><span class="n">hjWn1eRWGaWJqK5kKzM</span><span class="o">%</span><span class="mi">2</span><span class="n">BxaZJQkiW3UWiEO3hkVZTwkiFLpXlhVEuW</span><span class="o">%</span><span class="mi">2</span><span class="n">BSpOTZz4</span><span class="o">%</span><span class="mi">2</span><span class="n">BiLYNKMlw</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="nl">Cookie:</span><span class="n">index_logined_hotmusic_tab</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="n">t_sign_auth</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span> <span class="n">member_auth</span><span class="o">=</span><span class="mi">7</span><span class="n">hjWn1eRWGaWJqK5kKkiW3UWiEO3hkVZTwkiFLpXlhVEuW</span><span class="o">%</span><span class="mi">2</span><span class="n">BSpOTZz4</span><span class="o">%</span><span class="mi">2</span><span class="n">BiLYNKMlw</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>通过继续对页面分析，发现，index_logined_hotmusic_tab的值在虾米js中设置为常数1,t_sign_auth的值在打开首页的时候通过set-cookie得到。</p>
+<p>通过继续对页面分析，发现，index_logined_hotmusic_tab的值在js中设置为常数1,t_sign_auth的值在打开首页的时候通过set-cookie得到。</p>
 
 <p>这时，我们只需要截获并伪造这三个cookie,就可以签到模拟请求了 ：）</p>
 
@@ -183,7 +183,7 @@
 
 <p>到此，我们的http数据包就分析结束了，接下来就是编码的工作了,下面附上源码。</p>
 
-<figure class='code'><figcaption><span>xiamiSignin</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<figure class='code'><figcaption><span>Signin</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -315,19 +315,19 @@
 </span><span class='line'>    <span class="p">)</span>
 </span><span class='line'><span class="p">);</span>
 </span><span class='line'>
-</span><span class='line'><span class="c1">//虾米登陆网址</span>
-</span><span class='line'><span class="nv">$loginUrl</span> <span class="o">=</span> <span class="s2">&quot;http://www.xiami.com/member/login&quot;</span><span class="p">;</span>
-</span><span class='line'><span class="c1">//虾米网址</span>
-</span><span class='line'><span class="nv">$xiamiUrl</span> <span class="o">=</span> <span class="s2">&quot;http://www.xiami.com/&quot;</span><span class="p">;</span>
-</span><span class='line'><span class="c1">//虾米签到网址</span>
-</span><span class='line'><span class="nv">$signinUrl</span> <span class="o">=</span> <span class="s2">&quot;http://www.xiami.com/task/signin&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="c1">//登陆网址</span>
+</span><span class='line'><span class="nv">$loginUrl</span> <span class="o">=</span> <span class="s2">&quot;http://www.xxx.com/member/login&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="c1">//网址首页</span>
+</span><span class='line'><span class="nv">$xiamiUrl</span> <span class="o">=</span> <span class="s2">&quot;http://www.xxx.com/&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="c1">//签到网址</span>
+</span><span class='line'><span class="nv">$signinUrl</span> <span class="o">=</span> <span class="s2">&quot;http://www.xxxx.com/task/signin&quot;</span><span class="p">;</span>
 </span><span class='line'>
 </span><span class='line'><span class="c1">//http头部，模拟浏览器行为</span>
 </span><span class='line'><span class="nv">$headre</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
 </span><span class='line'>    <span class="s2">&quot;Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_3) AppleWebKit/534.55.3 (KHTML, like Gecko) Version/5.1.5 Safari/534.55.3&quot;</span><span class="p">,</span>
-</span><span class='line'>    <span class="s2">&quot;Origin: http://www.xiami.com&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s2">&quot;Origin: http://www.xxxx.com&quot;</span><span class="p">,</span>
 </span><span class='line'>    <span class="s2">&quot;X-Requested-With: XMLHttpRequest&quot;</span><span class="p">,</span>
-</span><span class='line'>    <span class="s2">&quot;Referer: http://www.xiami.com/&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s2">&quot;Referer: http://www.xxxx.com/&quot;</span><span class="p">,</span>
 </span><span class='line'>    <span class="s2">&quot;Accept-Language: zh-cn&quot;</span><span class="p">,</span>
 </span><span class='line'>    <span class="s2">&quot;Accept-Encoding:  deflate&quot;</span>
 </span><span class='line'><span class="p">);</span>

@@ -4,7 +4,7 @@
   <title><![CDATA[Category: php,http | SK's Blog]]></title>
   <link href="http://sunkid.me/blog/categories/php-http/atom.xml" rel="self"/>
   <link href="http://sunkid.me/"/>
-  <updated>2012-04-13T14:26:00+08:00</updated>
+  <updated>2012-04-13T14:35:08+08:00</updated>
   <id>http://sunkid.me/</id>
   <author>
     <name><![CDATA[sk.c]]></name>
@@ -28,7 +28,7 @@
 
 <p>(顺便在这鄙视上面2个做了后不写出来分享的童鞋)</p>
 
-<p>不甘落后，我也写个php版本的伪http包自动签到，目标是<a href="http://www.xiami.com/">虾米</a>。。这样妈妈再也不怕我没红包听音乐了：）</p>
+<p>不甘落后，我也写个php版本的伪http包自动签到：）</p>
 
 <br/>
 
@@ -45,14 +45,14 @@
 ``` html check_in_a
 <a class="checkin text" id="check_in" href="javascript:;" title=""></p>
 
-<pre><code>签到 得红包
+<pre><code>签到
 &lt;span&gt;Check in&lt;/span&gt;
 </code></pre>
 
 <p></a>
 ```</p>
 
-<p>没有直接写明链接地址，于是从js入手找，方法很简单，在虾米主页的代码上搜索这个按钮的id"check_in"</p>
+<p>没有直接写明链接地址，于是从js入手找，方法很简单，在主页的代码上搜索这个按钮的id "check_in"</p>
 
 <p>很快可以找到该id绑定了一个点击触发函数,代码如下：
 ``` javascript check_in_js
@@ -76,7 +76,7 @@ $(function () {</p>
 
 <p>这时，两个主要的地址我们已经找出来了。</p>
 
-<p>紧接着，通过浏览器登陆虾米，正常签到。在这个过程的同时，我们需要截获登陆和签到的http数据包.
+<p>紧接着，通过浏览器登陆网站，正常签到。在这个过程的同时，我们需要截获登陆和签到的http数据包.
 这需要借助一些嗅探器，我在mac下用的是<a href="http://www.wireshark.org/download.html">Wireshark</a></p>
 
 <p>这是截获到登陆请求的数据包：</p>
@@ -100,20 +100,20 @@ $(function () {</p>
 
 <p>图片中的cookie只显示了一部分，附上完整的cookie值：
 <code>c cookie
-Cookie:cnzz_a921634=0; cnzz_eid=22096341-1334189912-http%3A//www.xiami.com/member/logout; ltime=1334193113668; rtime=0; sin921634=none; __gads=ID=7c2eb69c29c523a2:T=1334193113:S=ALNI_Mb0TRs4TR3yexCHEW4kFeWwZLI1Zw; index_logined_hotmusic_tab=1; __utma=251084815.740794992.1334193113.1334193113.1334193113.1; __utmb=251084815.1.10.1334193113; __utmc=251084815; __utmz=251084815.1334193113.1.1.utmcsr=(direct)|utmccn=(direct)|utmcmd=(none); t_sign_auth=1; member_auth=7hjWn1eRWGaWJqK5kKzM%2BxaZJQkiW3UWiEO3hkVZTwkiFLpXlhVEuW%2BSpOTZz4%2BiLYNKMlw
+Cookie:cnzz_a921634=0; ltime=1334193113668; rtime=0; sin921634=none; __gads=ID=7c2eb69c29c523a2:T=1334193113:S=ALNI_Mb0TRs4TR3yexCHEW4kFeWwZLI1Zw; index_logined_hotmusic_tab=1; __utma=251084815.740794992.1334193113.1334193113.1334193113.1; __utmb=251084815.1.10.1334193113; __utmc=251084815; __utmz=251084815.1334193113.1.1.utmcsr=(direct)|utmccn=(direct)|utmcmd=(none); t_sign_auth=1; member_auth=7hjWn1eRWGaWJqK5kKzM%2BxaZJQkiW3UWiEO3hkVZTwkiFLpXlhVEuW%2BSpOTZz4%2BiLYNKMlw
 </code></p>
 
 <p>呃，这看上去有点多，而且这些数据不像是从服务器通过set-cookie过来的，猜测是通过js设置的cookie值。
-我选取了'__utmb'对在虾米页面上的js进行搜索，结果在”http://www.google-analytics.com/ga.js“发现了这个值。</p>
+我选取了'__utmb'对在页面上的js进行搜索，结果在”http://www.google-analytics.com/ga.js“发现了这个值。</p>
 
-<p>到这里，我们知道这个是google analytics设置的cookie，对虾米的签到是不会影响。
+<p>到这里，我们知道这个是google analytics设置的cookie，对该网页的签到是不会影响。
 通过继续分析，我们可以排除大部分cookie,剩下的cookie值就是我们需要伪造的了：</p>
 
 <p><code>c cookie
-Cookie:index_logined_hotmusic_tab=1;t_sign_auth=1; member_auth=7hjWn1eRWGaWJqK5kKzM%2BxaZJQkiW3UWiEO3hkVZTwkiFLpXlhVEuW%2BSpOTZz4%2BiLYNKMlw
+Cookie:index_logined_hotmusic_tab=1;t_sign_auth=1; member_auth=7hjWn1eRWGaWJqK5kKkiW3UWiEO3hkVZTwkiFLpXlhVEuW%2BSpOTZz4%2BiLYNKMlw
 </code></p>
 
-<p>通过继续对页面分析，发现，index_logined_hotmusic_tab的值在虾米js中设置为常数1,t_sign_auth的值在打开首页的时候通过set-cookie得到。</p>
+<p>通过继续对页面分析，发现，index_logined_hotmusic_tab的值在js中设置为常数1,t_sign_auth的值在打开首页的时候通过set-cookie得到。</p>
 
 <p>这时，我们只需要截获并伪造这三个cookie,就可以签到模拟请求了 ：）</p>
 
@@ -123,7 +123,7 @@ Cookie:index_logined_hotmusic_tab=1;t_sign_auth=1; member_auth=7hjWn1eRWGaWJqK5k
 
 <p>到此，我们的http数据包就分析结束了，接下来就是编码的工作了,下面附上源码。</p>
 
-<p>```php xiamiSignin
+<p>```php Signin
 &lt;?php</p>
 
 <p>//配置文件，填写用户密码信息
@@ -145,20 +145,20 @@ array(
 
 <p>);</p>
 
-<p>//虾米登陆网址
-$loginUrl = "http://www.xiami.com/member/login";
-//虾米网址
-$xiamiUrl = "http://www.xiami.com/";
-//虾米签到网址
-$signinUrl = "http://www.xiami.com/task/signin";</p>
+<p>//登陆网址
+$loginUrl = "http://www.xxx.com/member/login";
+//网址首页
+$xiamiUrl = "http://www.xxx.com/";
+//签到网址
+$signinUrl = "http://www.xxxx.com/task/signin";</p>
 
 <p>//http头部，模拟浏览器行为
 $headre = array(</p>
 
 <pre><code>"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_3) AppleWebKit/534.55.3 (KHTML, like Gecko) Version/5.1.5 Safari/534.55.3",
-"Origin: http://www.xiami.com",
+"Origin: http://www.xxxx.com",
 "X-Requested-With: XMLHttpRequest",
-"Referer: http://www.xiami.com/",
+"Referer: http://www.xxxx.com/",
 "Accept-Language: zh-cn",
 "Accept-Encoding:  deflate"
 </code></pre>
