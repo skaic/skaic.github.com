@@ -4,7 +4,7 @@
   <title><![CDATA[SK's Blog]]></title>
   <link href="http://sunkid.me/atom.xml" rel="self"/>
   <link href="http://sunkid.me/"/>
-  <updated>2012-04-13T14:57:23+08:00</updated>
+  <updated>2012-04-14T12:47:22+08:00</updated>
   <id>http://sunkid.me/</id>
   <author>
     <name><![CDATA[sk.c]]></name>
@@ -24,9 +24,7 @@
 
 <p>有用javascript 在浏览器做类似XSS的自动登陆签到的<a href="http://www.jqyang.com/">@NewBie</a></p>
 
-<p>还有用au3 做模拟点击来签到的<a href="http://www.schance.com/">@SCbant</a></p>
-
-<p>(顺便在这鄙视上面2个做了后不写出来分享的童鞋)</p>
+<p>还有用au3 做模拟点击来签到的<a href="http://www.schance.com/">@SCbant</a>. (顺便在这鄙视上面2个做了后不写出来分享的童鞋.凸 凸)</p>
 
 <p>不甘落后，我也写个php版本的伪http包自动签到：）</p>
 
@@ -34,6 +32,9 @@
 
 
 <p>首先，分析下某网站的登陆页面和签到页面：</p>
+
+<!--more-->
+
 
 <h4>登陆页面：</h4>
 
@@ -411,6 +412,9 @@
 
 <p>还有一直方法是采用单调队列的方法。百度上搜索到的多是这种方法的题解，用单调队列的时间复杂度为O(N*LogN).</p>
 
+<!--more-->
+
+
 <h3>Problem 1007</h3>
 
 <p>题目地址： <a href="http://acm.hdu.edu.cn/showproblem.php?pid=4144">Bacon&#8217;s Cipher</a></p>
@@ -642,6 +646,9 @@ a,找到的第一个a，b就是答案。。</p>
 </span><span class='line'>    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
+
+
+<!--more-->
 
 
 <h3>Problem 1002</h3>
@@ -911,44 +918,6 @@ j[i]/F[i]比较大的房间的JavaBean。</p>
 
 
 <h4>好吧，今晚先写到这了，剩下的明天继续吧，回去洗洗睡了。</h4>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[MAC下搭建PHP工作环境一]]></title>
-    <link href="http://sunkid.me/blog/2012/04/07/working-for-mac-1/"/>
-    <updated>2012-04-07T20:25:00+08:00</updated>
-    <id>http://sunkid.me/blog/2012/04/07/working-for-mac-1</id>
-    <content type="html"><![CDATA[<p>前几天开始换用macbook pro来开发php的工作，之前都是在windows下开发。这次决定弃用公司的台式机，把工作环境转移到自己的笔记本上。</p>
-
-<p>好吧，不多说了，首先介绍mac下的几款开发软件：</p>
-
-<h3><a href="http://netbeans.org/">NetBeans</a></h3>
-
-<p><img src="http://sunkid.me/images/post/NetBeans.jpg" width="600" height="800"></p>
-
-<p>比较喜欢NetBeans这款IDE，首先是它并不臃肿，如果你只下载php的开发环境包，整个安装包只有43M。
-然后它的功能也是比较齐全的，基本是够我使用了。不过有个缺陷是它不能查看文件的编码跟转编码</p>
-
-<p>在使用NetBeans之前我也尝试过把vim搭建成一个IDE来进行php开发，但最后还是放弃了。vim是一款很好的文本编辑器，
-但这不代表它也能成为一款好的IDE。喜欢vim的朋友，还是建议在IDE上面安装款vim的插件，我就是这样做的 ^.^</p>
-
-<p>顺便介绍NetBeans下的vim插件: <strong><a href="http://plugins.netbeans.org/plugin/2802/jvi-vi-vim-editor-clone">jVi</a></strong></p>
-
-<h3><a href="http://www.adobe.com/products/dreamweaver.html">Dreamweaver</a></h3>
-
-<p>DW 不用介绍了，写html的利器。缺点是这款软件的售价有点高，不过好的软件难免存在神秘通道。当然这里就不提供通道地址了，要的童鞋只能自己想办法咯</p>
-
-<h3><a href="http://code.google.com/p/macvim/">MacVim</a></h3>
-
-<p><img src="http://sunkid.me/images/post/MacVim.jpg" width="600" height="800"></p>
-
-<p>mac下的Gvim，平时用来看配置文件，或者只想打开一个代码文件不想开IDE的时候会用到。</p>
-
-<p>包括现在这篇文章也是用MacVim写的，一个不是很爽的是用vim写中文时，需要输入法
- 中文-》英文-》中文 这样经常性的切换,会导致多了很多键盘操作。</p>
-
-<h4>开发工具这3个基本就足够了，下一篇会介绍mac下apm的编译安装。</h4>
 ]]></content>
   </entry>
   

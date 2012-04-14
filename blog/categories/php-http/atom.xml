@@ -4,7 +4,7 @@
   <title><![CDATA[Category: php,http | SK's Blog]]></title>
   <link href="http://sunkid.me/blog/categories/php-http/atom.xml" rel="self"/>
   <link href="http://sunkid.me/"/>
-  <updated>2012-04-13T14:57:23+08:00</updated>
+  <updated>2012-04-14T12:47:22+08:00</updated>
   <id>http://sunkid.me/</id>
   <author>
     <name><![CDATA[sk.c]]></name>
@@ -24,9 +24,7 @@
 
 <p>有用javascript 在浏览器做类似XSS的自动登陆签到的<a href="http://www.jqyang.com/">@NewBie</a></p>
 
-<p>还有用au3 做模拟点击来签到的<a href="http://www.schance.com/">@SCbant</a></p>
-
-<p>(顺便在这鄙视上面2个做了后不写出来分享的童鞋)</p>
+<p>还有用au3 做模拟点击来签到的<a href="http://www.schance.com/">@SCbant</a>. (顺便在这鄙视上面2个做了后不写出来分享的童鞋.凸 凸)</p>
 
 <p>不甘落后，我也写个php版本的伪http包自动签到：）</p>
 
@@ -34,6 +32,9 @@
 
 
 <p>首先，分析下某网站的登陆页面和签到页面：</p>
+
+<!--more-->
+
 
 <h4>登陆页面：</h4>
 

@@ -4,7 +4,7 @@
   <title><![CDATA[Category: acm | SK's Blog]]></title>
   <link href="http://sunkid.me/blog/categories/acm/atom.xml" rel="self"/>
   <link href="http://sunkid.me/"/>
-  <updated>2012-04-13T14:57:23+08:00</updated>
+  <updated>2012-04-14T12:47:22+08:00</updated>
   <id>http://sunkid.me/</id>
   <author>
     <name><![CDATA[sk.c]]></name>
@@ -47,6 +47,9 @@
 <p>用线段数最主要的目的是为了减少计算区间的遍历时间.</p>
 
 <p>还有一直方法是采用单调队列的方法。百度上搜索到的多是这种方法的题解，用单调队列的时间复杂度为O(N*LogN).</p>
+
+<!--more-->
+
 
 <h3>Problem 1007</h3>
 
@@ -238,6 +241,9 @@ return 0;
 
 <p>}
 ```</p>
+
+<!--more-->
+
 
 <h3>Problem 1002</h3>
 
