@@ -7,7 +7,7 @@
     <meta name="author" content="sk.c">
 
     
-    <meta name="description" content="Php模拟数据包——自动签到 最近几个室友染上研究自动签到机的恶习。 其中包括有用C写socket 接发伪http包的@tinpont 有用javascript 在浏览器做类似XSS的自动登陆签到的@NewBie 还有用au3 做模拟点击来签到的@SCbant. ( &hellip;">
+    <meta name="description" content="php配置文件加载错误(php.ini) 最近在编译安装APC的时候，发现php一直加载不到APC模块。在确认编译没有错误后，开始从php上找问题。 结果发现个很坑爹的事 php的info页面显示的配置文件位置和用php &#8211;ini 命令显示不同，这里php &#8211; &hellip;">
     
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -61,6 +61,55 @@
 </header>
 	
 	<div id="content" class="inner">
+
+
+    <article class="post">
+    <h1 class="title"><a href="/blog/2012/04/16/php-configuration-file-path/">php配置文件加载错误(php.ini)</a></h1>
+    <div class="entry">
+        <p>最近在编译安装<a href="http://pecl.php.net/package/apc">APC</a>的时候，发现php一直加载不到APC模块。在确认编译没有错误后，开始从php上找问题。</p>
+
+<p>结果发现个很坑爹的事</p>
+
+<p><img src="/images/post/php_conf.jpg"></p>
+
+<p>php的info页面显示的配置文件位置和用php &#8211;ini 命令显示不同，这里php &#8211;ini显示的配置文件目录才是php真正的加载目录，
+导致我配置的时候编辑&#8221;/usr/local/ect/&#8221;目录下的php.ini一直没有生效，所以APC的模块也一直没加载到。</p>
+
+<p>而这个情况的起因原来是因为我重新configure,但没有make clean!!</p>
+
+<h3>囧</h3>
+
+<p>被自己坑了。</p>
+
+        
+        
+    </div>
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-04-16T18:38:00+08:00" pubdate data-updated="true">Apr 16<span>th</span>, 2012</time></div>
+        <div class="tags">
+
+<div class="cat">
+  
+    <a class='category' href='/blog/categories/php-conf/'>php，conf</a>
+  
+</div>
+
+</div>
+        
+    </div>
+</article>
 
 
     <article class="post">
