@@ -4,7 +4,7 @@
   <title><![CDATA[SK's Blog]]></title>
   <link href="http://sunkid.me/atom.xml" rel="self"/>
   <link href="http://sunkid.me/"/>
-  <updated>2012-04-17T12:26:47+08:00</updated>
+  <updated>2012-05-02T10:26:24+08:00</updated>
   <id>http://sunkid.me/</id>
   <author>
     <name><![CDATA[sk.c]]></name>
@@ -12,6 +12,72 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[php5.4下安装drupal7.12的注意事项]]></title>
+    <link href="http://sunkid.me/blog/2012/04/28/install-drupal7-dot-12-for-php5-dot-4/"/>
+    <updated>2012-04-28T17:42:00+08:00</updated>
+    <id>http://sunkid.me/blog/2012/04/28/install-drupal7-dot-12-for-php5-dot-4</id>
+    <content type="html"><![CDATA[<p>自从在我的mac下把php升级到5.4后，就没少折腾过，这次折腾的是安装drupal 7.12。
+目前官网最新的版本，还没兼容php 5.4，需要我们自己打2个补丁，包括几个环境配置上
+需要注意的地方。</p>
+
+<p>我们先看下第一个报错信息和相应的补丁包</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Notice: Array to string conversion in menu_link_save()
+</span><span class='line'>(line 3155 of /Users/skc/NetBeansProjects/drupal7/includes/menu.inc).</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这个错误的讨论可以看这里：<a href="http://drupal.org/node/1338282#comment-5719166">Fix php notice in menu_link_save( )</a></p>
+
+<p>我采用的解决补丁包是15#的这个：<a href="http://drupal.org/files/menu-link-save-1338282-15.patch">menu-link-save-1338282-15.patch</a></p>
+
+<!--more-->
+
+
+<p>给代码搭补丁的方式很简单，先下载patch文件到drupal的目录，然后执行命令</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>patch -p2 &lt; menu-link-save-1338282-15.patch
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>相关patch的命令资料也可以在这找到:<a href="http://study.chyangwa.com/IT/AIX/aixcmds4/patch.htm">patch</a></p>
+
+<p>你可能还会遇到这样的错误：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>Warning: Illegal string offset <span class="s1">&#39;field&#39;</span> in DatabaseCondition-&gt;__clone<span class="o">()</span>
+</span><span class='line'><span class="o">(</span>line 1901 of /Users/skc/NetBeansProjects/drupal7/includes/database/query.inc<span class="o">)</span>.
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>官网的讨论组也给出了相应的补丁包：<a href="http://drupal.org/files/database-query-clone-1414412.patch">database-query-clone-1414412.patch</a></p>
+
+<p>如果你在还没安装补丁包之前尝试了安装，可能会出现
+<a href="http://drupal.org/node/1171756#comment-5842376">“The 31 tables problem”</a>
+（数据库只生成了31张表）。如果你出现这种情况，可以通过下面几个步骤解决。</p>
+
+<pre><code>1. Clearing the database cache.
+2. Dropping and recreating the database.
+3. Making the entire directory tree (files and directories) world-writeable.
+4. setting apc.stat=1 (and restarting Apache).
+5. Setting wincache.ocenabled=0 (and restarting Apache).
+6. Clearing the browser cache.
+7. Switching among different browser families (Firefox, Chrome, IE) on different OSes (XP, Vista, Xubuntu).
+8. Not installing into a subdirectory of the document root.
+9. Only using the default .htaccess shipped with the source.
+10. Stripping all other content from the document root.
+</code></pre>
+
+<p>这就是我目前在自己环境下遇到的几个问题，也许在不同的环境又会有其他的问题。比较庆幸的是drupal官网的讨论相当热烈，在上面基本可以找到大部分问题的解决办法（其中很多解决办法是来自开发者提供的）。</p>
+
+<p>如果你遇到其他的问题，尽可试试在drupal讨论组寻找下答案 ^.^</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[php配置文件加载错误(php.ini)]]></title>

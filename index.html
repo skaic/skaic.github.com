@@ -8,7 +8,9 @@
 	<meta http-equiv="cache-control" content="no-cache" >
 	<meta http-equiv="expires" content="Fri, 30 Dec 2011 12:00:00 GMT" >
     
-    <meta name="description" content="php配置文件加载错误(php.ini) 最近在编译安装APC的时候，发现php一直加载不到APC模块。在确认编译没有错误后，开始从php上找问题。 结果发现个很坑爹的事 php的info页面显示的配置文件位置和用php &#8211;ini 命令显示不同，这里php &#8211; &hellip;">
+    <meta name="description" content="php5.4下安装drupal7.12的注意事项 自从在我的mac下把php升级到5.4后，就没少折腾过，这次折腾的是安装drupal 7.12。
+目前官网最新的版本，还没兼容php 5.4，需要我们自己打2个补丁，包括几个环境配置上
+需要注意的地方。 我们先看下第一个报错信息和相应的补丁包 1 &hellip;">
     
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -62,6 +64,57 @@
 </header>
 	
 	<div id="content" class="inner">
+
+
+    <article class="post">
+    <h1 class="title"><a href="/blog/2012/04/28/install-drupal7-dot-12-for-php5-dot-4/">php5.4下安装drupal7.12的注意事项</a></h1>
+    <div class="entry">
+        <p>自从在我的mac下把php升级到5.4后，就没少折腾过，这次折腾的是安装drupal 7.12。
+目前官网最新的版本，还没兼容php 5.4，需要我们自己打2个补丁，包括几个环境配置上
+需要注意的地方。</p>
+
+<p>我们先看下第一个报错信息和相应的补丁包</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Notice: Array to string conversion in menu_link_save()
+</span><span class='line'>(line 3155 of /Users/skc/NetBeansProjects/drupal7/includes/menu.inc).</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这个错误的讨论可以看这里：<a href="http://drupal.org/node/1338282#comment-5719166">Fix php notice in menu_link_save( )</a></p>
+
+<p>我采用的解决补丁包是15#的这个：<a href="http://drupal.org/files/menu-link-save-1338282-15.patch">menu-link-save-1338282-15.patch</a></p>
+
+
+        
+        <a href="/blog/2012/04/28/install-drupal7-dot-12-for-php5-dot-4/" class="more-link">Read on &rarr;</a>
+    </div>
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-04-28T17:42:00+08:00" pubdate data-updated="true">Apr 28<span>th</span>, 2012</time></div>
+        <div class="tags">
+
+<div class="cat">
+  
+    <a class='category' href='/blog/categories/php-drupal/'>php,drupal</a>
+  
+</div>
+
+</div>
+        
+    </div>
+</article>
 
 
     <article class="post">
