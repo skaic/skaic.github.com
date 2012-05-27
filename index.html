@@ -8,9 +8,8 @@
 	<meta http-equiv="cache-control" content="no-cache" >
 	<meta http-equiv="expires" content="Fri, 30 Dec 2011 12:00:00 GMT" >
     
-    <meta name="description" content="php5.4下安装drupal7.12的注意事项 自从在我的mac下把php升级到5.4后，就没少折腾过，这次折腾的是安装drupal 7.12。
-目前官网最新的版本，还没兼容php 5.4，需要我们自己打2个补丁，包括几个环境配置上
-需要注意的地方。 我们先看下第一个报错信息和相应的补丁包 1 &hellip;">
+    <meta name="description" content="Linux下的回收站 linux 下的rm是非常邪恶的命令，我就曾经因为一条失误的rm命令，把我近一个月的代码给删了
+（那时候还没用svn，git这些工具），还好后来花了2天找回大部分代码，不然真的心都碎了。 有了那次教训后，每次使用rm都会小心翼翼，担心稍微有误又悲催了。。 &hellip;">
     
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -64,6 +63,83 @@
 </header>
 	
 	<div id="content" class="inner">
+
+
+    <article class="post">
+    <h1 class="title"><a href="/blog/2012/05/27/linux-trash/">Linux下的回收站</a></h1>
+    <div class="entry">
+        <p>linux 下的rm是非常邪恶的命令，我就曾经因为一条失误的rm命令，把我近一个月的代码给删了
+（那时候还没用svn，git这些工具），还好后来花了2天找回大部分代码，不然真的心都碎了。</p>
+
+<p>有了那次教训后，每次使用rm都会小心翼翼，担心稍微有误又悲催了。。于是后来就有了给linux创
+建个回收站的想法。</p>
+
+<p>在linux下创建个独有的回收站是很简单的，只要打开文件（~/.bash_profile）,添加以下这几行命令就可以了</p>
+
+<figure class='code'><figcaption><span>.bash_profile</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">alias </span><span class="nv">del</span><span class="o">=</span>trash
+</span><span class='line'><span class="nb">alias </span><span class="nv">dell</span><span class="o">=</span><span class="s2">&quot;ls ~/.trash&quot;</span>
+</span><span class='line'>
+</span><span class='line'>trash<span class="o">(){</span>
+</span><span class='line'>        mv <span class="nv">$@</span> ~/.trash/
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>以后呢，如果你想删除文件，就可以用del命令了，如下：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>del xxx //删除xxx文件/文件夹
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>你还可以通过dell命令来查看回收站里面的内容。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>dell
+</span><span class='line'>---------
+</span><span class='line'>xxx
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong><em>最后注意： 修改.bash_profile 文件后，需要重新登陆bash才会生效。</em></strong></p>
+
+        
+        
+    </div>
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-05-27T18:48:00+08:00" pubdate data-updated="true">May 27<span>th</span>, 2012</time></div>
+        <div class="tags">
+
+<div class="cat">
+  
+    <a class='category' href='/blog/categories/linux-bash/'>linux,bash</a>
+  
+</div>
+
+</div>
+        
+    </div>
+</article>
 
 
     <article class="post">
