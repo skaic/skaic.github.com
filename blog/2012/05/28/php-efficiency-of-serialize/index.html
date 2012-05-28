@@ -1,0 +1,455 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>php 序列化的几种方法比较 - SK's Blog</title>
+    <meta name="author" content="sk.c">
+	<meta http-equiv="cache-control" content="no-cache" >
+	<meta http-equiv="expires" content="Fri, 30 Dec 2011 12:00:00 GMT" >
+    
+    <meta name="description" content="Php 序列化的几种方法比较 最近看Thinkphp源码，看到里面的F函数，用var_export方法对数组进行序列化保存到文本来做缓存。
+这是头次见到的，有点疑惑是否TP的这种方法会不会快点呢？于是有了下面的几个小测试 首先测试ThinkPHP的var_export对序列化和反序列化的效率 &hellip;">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <link href="/atom.xml" rel="alternate" title="SK's Blog" type="application/atom+xml">
+    <link rel="canonical" href="">
+    <link href="/favicon.png" rel="shortcut icon">
+    <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+    <!--[if lt IE 9]><script src="/javascripts/html5.js"></script><![endif]-->
+    <script src="/javascripts/jquery.min.js"></script>
+    
+    
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-30759050-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+    
+
+</head>
+
+
+<body>
+	<header class="inner"><h1 class="left"><a href="/">SK's Blog</a></h1>
+<nav class="menu left"><ul class="main">
+	<li><a href="/">Blog</a></li>
+	<li><a href="/blog/archives">Archives</a></li>
+</ul>
+</nav>
+<div class="right">
+	<form class="search right" action="http://google.com/search" method="get">
+		<input class="left" type="text" name="q" results="0">
+		<input type="hidden" name="q" value="site:sunkid.me">
+	</form>
+	<div class="social right">
+		
+		
+		
+		
+		<a class="rss" href="/atom.xml" title="RSS">RSS</a>
+		
+	</div>
+</div>
+</header>
+	
+	<div id="content" class="inner"><article class="post">
+    <h1 class="title">Php 序列化的几种方法比较</h1>
+    <div class="entry"><p>最近看Thinkphp源码，看到里面的F函数，用var_export方法对数组进行序列化保存到文本来做缓存。
+这是头次见到的，有点疑惑是否TP的这种方法会不会快点呢？于是有了下面的几个小测试</p>
+
+<!--more-->
+
+
+<p>首先测试ThinkPHP的var_export对序列化和反序列化的效率</p>
+
+<figure class='code'><figcaption><span>ThinkPhp</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="cp">&lt;?php</span>
+</span><span class='line'><span class="c1">// 去除代码中的空白和注释</span>
+</span><span class='line'><span class="c1">//ThinkPhp 的函数</span>
+</span><span class='line'><span class="k">function</span> <span class="nf">strip_whitespace</span><span class="p">(</span><span class="nv">$content</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nv">$stripStr</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+</span><span class='line'>    <span class="c1">//分析php源码</span>
+</span><span class='line'>    <span class="nv">$tokens</span> <span class="o">=</span> <span class="nb">token_get_all</span><span class="p">(</span><span class="nv">$content</span><span class="p">);</span>
+</span><span class='line'>    <span class="nv">$last_space</span> <span class="o">=</span> <span class="k">false</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">for</span> <span class="p">(</span><span class="nv">$i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nv">$j</span> <span class="o">=</span> <span class="nb">count</span><span class="p">(</span><span class="nv">$tokens</span><span class="p">);</span> <span class="nv">$i</span> <span class="o">&lt;</span> <span class="nv">$j</span><span class="p">;</span> <span class="nv">$i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">if</span> <span class="p">(</span><span class="nb">is_string</span><span class="p">(</span><span class="nv">$tokens</span><span class="p">[</span><span class="nv">$i</span><span class="p">]))</span> <span class="p">{</span>
+</span><span class='line'>            <span class="nv">$last_space</span> <span class="o">=</span> <span class="k">false</span><span class="p">;</span>
+</span><span class='line'>            <span class="nv">$stripStr</span> <span class="o">.=</span> <span class="nv">$tokens</span><span class="p">[</span><span class="nv">$i</span><span class="p">];</span>
+</span><span class='line'>        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>            <span class="k">switch</span> <span class="p">(</span><span class="nv">$tokens</span><span class="p">[</span><span class="nv">$i</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="p">{</span>
+</span><span class='line'>                <span class="c1">//过滤各种PHP注释</span>
+</span><span class='line'>                <span class="k">case</span> <span class="nx">T_COMMENT</span><span class="o">:</span>
+</span><span class='line'>                <span class="k">case</span> <span class="nx">T_DOC_COMMENT</span><span class="o">:</span>
+</span><span class='line'>                    <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>                <span class="c1">//过滤空格</span>
+</span><span class='line'>                <span class="k">case</span> <span class="nx">T_WHITESPACE</span><span class="o">:</span>
+</span><span class='line'>                    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nv">$last_space</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                        <span class="nv">$stripStr</span> <span class="o">.=</span> <span class="s1">&#39; &#39;</span><span class="p">;</span>
+</span><span class='line'>                        <span class="nv">$last_space</span> <span class="o">=</span> <span class="k">true</span><span class="p">;</span>
+</span><span class='line'>                    <span class="p">}</span>
+</span><span class='line'>                    <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>                <span class="k">case</span> <span class="nx">T_START_HEREDOC</span><span class="o">:</span>
+</span><span class='line'>                    <span class="nv">$stripStr</span> <span class="o">.=</span> <span class="s2">&quot;&lt;&lt;&lt;THINK</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
+</span><span class='line'>                    <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>                <span class="k">case</span> <span class="nx">T_END_HEREDOC</span><span class="o">:</span>
+</span><span class='line'>                    <span class="nv">$stripStr</span> <span class="o">.=</span> <span class="s2">&quot;THINK;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
+</span><span class='line'>                    <span class="k">for</span> <span class="p">(</span><span class="nv">$k</span> <span class="o">=</span> <span class="nv">$i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span> <span class="nv">$k</span> <span class="o">&lt;</span> <span class="nv">$j</span><span class="p">;</span> <span class="nv">$k</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                        <span class="k">if</span> <span class="p">(</span><span class="nb">is_string</span><span class="p">(</span><span class="nv">$tokens</span><span class="p">[</span><span class="nv">$k</span><span class="p">])</span> <span class="o">&amp;&amp;</span> <span class="nv">$tokens</span><span class="p">[</span><span class="nv">$k</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;;&quot;</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                            <span class="nv">$i</span> <span class="o">=</span> <span class="nv">$k</span><span class="p">;</span>
+</span><span class='line'>                            <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>                        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nv">$tokens</span><span class="p">[</span><span class="nv">$k</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="nx">T_CLOSE_TAG</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                            <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>                        <span class="p">}</span>
+</span><span class='line'>                    <span class="p">}</span>
+</span><span class='line'>                    <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>                <span class="k">default</span><span class="o">:</span>
+</span><span class='line'>                    <span class="nv">$last_space</span> <span class="o">=</span> <span class="k">false</span><span class="p">;</span>
+</span><span class='line'>                    <span class="nv">$stripStr</span> <span class="o">.=</span> <span class="nv">$tokens</span><span class="p">[</span><span class="nv">$i</span><span class="p">][</span><span class="mi">1</span><span class="p">];</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nv">$stripStr</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">//创建数组函数</span>
+</span><span class='line'><span class="k">function</span> <span class="nf">createArray</span><span class="p">(</span><span class="nv">$i</span><span class="p">){</span>
+</span><span class='line'>  <span class="nv">$array</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+</span><span class='line'>  <span class="k">for</span><span class="p">(</span><span class="nv">$k</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="nv">$k</span><span class="o">&lt;</span><span class="nv">$i</span><span class="p">;</span><span class="nv">$k</span><span class="o">++</span><span class="p">){</span>
+</span><span class='line'>      <span class="nv">$array</span><span class="p">[</span><span class="nv">$k</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$k</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="k">return</span> <span class="nv">$array</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$data</span> <span class="o">=</span> <span class="nx">createArray</span><span class="p">(</span><span class="mi">10000</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$start</span> <span class="o">=</span> <span class="nb">microtime</span><span class="p">(</span><span class="k">TRUE</span><span class="p">);</span>
+</span><span class='line'><span class="nv">$sdata</span> <span class="o">=</span> <span class="nb">var_export</span><span class="p">(</span><span class="nv">$data</span><span class="p">,</span> <span class="k">true</span><span class="p">);</span>
+</span><span class='line'><span class="nb">file_put_contents</span><span class="p">(</span><span class="s2">&quot;tp.php&quot;</span><span class="p">,</span> <span class="nx">strip_whitespace</span><span class="p">(</span><span class="s2">&quot;&lt;?php</span><span class="se">\n</span><span class="s2">return &quot;</span> <span class="o">.</span> <span class="nv">$sdata</span> <span class="o">.</span> <span class="s2">&quot;;</span><span class="se">\n</span><span class="s2">?&gt;&quot;</span><span class="p">));</span>
+</span><span class='line'><span class="nv">$end</span> <span class="o">=</span> <span class="nb">microtime</span><span class="p">(</span><span class="k">TRUE</span><span class="p">);</span>
+</span><span class='line'><span class="k">echo</span> <span class="s2">&quot;serialize time:&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="k">echo</span> <span class="nv">$end</span> <span class="o">-</span> <span class="nv">$start</span><span class="p">;</span>
+</span><span class='line'><span class="k">echo</span> <span class="s2">&quot;(s), &quot;</span><span class="p">;</span>
+</span><span class='line'><span class="k">echo</span> <span class="s2">&quot;serialize longth:&quot;</span><span class="o">.</span><span class="nb">strlen</span><span class="p">(</span><span class="nv">$sdata</span><span class="p">);</span>
+</span><span class='line'><span class="k">echo</span> <span class="s2">&quot;&lt;br/&gt;&quot;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$start</span> <span class="o">=</span> <span class="nb">microtime</span><span class="p">(</span><span class="k">TRUE</span><span class="p">);</span>
+</span><span class='line'><span class="nv">$data</span> <span class="o">=</span> <span class="k">include</span> <span class="s2">&quot;tp.php&quot;</span><span class="p">;</span><span class="c1">//反序列号</span>
+</span><span class='line'><span class="nv">$end</span> <span class="o">=</span> <span class="nb">microtime</span><span class="p">(</span><span class="k">TRUE</span><span class="p">);</span>
+</span><span class='line'><span class="k">echo</span> <span class="s2">&quot;unserialize time:&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="k">echo</span> <span class="nv">$end</span> <span class="o">-</span> <span class="nv">$start</span><span class="p">;</span>
+</span><span class='line'><span class="k">echo</span> <span class="s2">&quot;(s)&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="cp">?&gt;</span><span class="x"></span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>serialize <span class="nb">time</span>:0.18270683288574<span class="o">(</span>s<span class="o">)</span>, serialize longth:157789
+</span><span class='line'>unserialize <span class="nb">time</span>:0.0076150894165039<span class="o">(</span>s<span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>由于上面的方法要把数据写入文件，所以为了做比较，下面的序列化和反序列化也都写到文件后再读出来，
+接着，测试的是传统serialize函数</p>
+
+<figure class='code'><figcaption><span>serialize</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="cp">&lt;?php</span>
+</span><span class='line'><span class="k">function</span> <span class="nf">createArray</span><span class="p">(</span><span class="nv">$i</span><span class="p">){</span>
+</span><span class='line'>  <span class="nv">$array</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+</span><span class='line'>  <span class="k">for</span><span class="p">(</span><span class="nv">$k</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="nv">$k</span><span class="o">&lt;</span><span class="nv">$i</span><span class="p">;</span><span class="nv">$k</span><span class="o">++</span><span class="p">){</span>
+</span><span class='line'>      <span class="nv">$array</span><span class="p">[</span><span class="nv">$k</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$k</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="k">return</span> <span class="nv">$array</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$data</span> <span class="o">=</span> <span class="nx">createArray</span><span class="p">(</span><span class="mi">10000</span><span class="p">);</span>
+</span><span class='line'><span class="nv">$start</span> <span class="o">=</span> <span class="nb">microtime</span><span class="p">(</span><span class="k">TRUE</span><span class="p">);</span>
+</span><span class='line'><span class="nv">$sdata</span> <span class="o">=</span>  <span class="nb">serialize</span><span class="p">(</span><span class="nv">$data</span><span class="p">);</span> <span class="c1">//序列化</span>
+</span><span class='line'><span class="nb">file_put_contents</span><span class="p">(</span><span class="s2">&quot;se.php&quot;</span><span class="p">,</span> <span class="nv">$sdata</span><span class="p">);</span>
+</span><span class='line'><span class="nv">$end</span> <span class="o">=</span> <span class="nb">microtime</span><span class="p">(</span><span class="k">TRUE</span><span class="p">);</span>
+</span><span class='line'><span class="k">echo</span> <span class="s2">&quot;sertialize time:&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="k">echo</span> <span class="nv">$end</span> <span class="o">-</span> <span class="nv">$start</span><span class="p">;</span>
+</span><span class='line'><span class="k">echo</span> <span class="s2">&quot;(s), &quot;</span><span class="p">;</span>
+</span><span class='line'><span class="k">echo</span> <span class="s2">&quot;sertialize longth:&quot;</span><span class="o">.</span><span class="nb">strlen</span><span class="p">(</span><span class="nv">$sdata</span><span class="p">);</span>
+</span><span class='line'><span class="k">echo</span> <span class="s2">&quot;&lt;br/&gt;&quot;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$start</span> <span class="o">=</span> <span class="nb">microtime</span><span class="p">(</span><span class="k">TRUE</span><span class="p">);</span>
+</span><span class='line'><span class="nv">$rdata</span> <span class="o">=</span> <span class="nb">file_get_contents</span><span class="p">(</span><span class="s2">&quot;se.php&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="nv">$data</span> <span class="o">=</span> <span class="nb">unserialize</span><span class="p">(</span><span class="nv">$rdata</span><span class="p">);</span> <span class="c1">//反序列化</span>
+</span><span class='line'><span class="nv">$end</span> <span class="o">=</span> <span class="nb">microtime</span><span class="p">(</span><span class="k">TRUE</span><span class="p">);</span>
+</span><span class='line'><span class="k">echo</span> <span class="s2">&quot;unserialize time:&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="k">echo</span> <span class="nv">$end</span> <span class="o">-</span> <span class="nv">$start</span><span class="p">;</span>
+</span><span class='line'><span class="k">echo</span> <span class="s2">&quot;(s)&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="cp">?&gt;</span><span class="x"></span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sertialize <span class="nb">time</span>:0.0031681060791016<span class="o">(</span>s<span class="o">)</span>, sertialize longth:137790
+</span><span class='line'>unserialize <span class="nb">time</span>:0.0037140846252441<span class="o">(</span>s<span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>再看看用json做序列化的效果</p>
+
+<figure class='code'><figcaption><span>json</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="cp">&lt;?php</span>
+</span><span class='line'><span class="k">function</span> <span class="nf">createArray</span><span class="p">(</span><span class="nv">$i</span><span class="p">){</span>
+</span><span class='line'>  <span class="nv">$array</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+</span><span class='line'>  <span class="k">for</span><span class="p">(</span><span class="nv">$k</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="nv">$k</span><span class="o">&lt;</span><span class="nv">$i</span><span class="p">;</span><span class="nv">$k</span><span class="o">++</span><span class="p">){</span>
+</span><span class='line'>      <span class="nv">$array</span><span class="p">[</span><span class="nv">$k</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$k</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="k">return</span> <span class="nv">$array</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$data</span> <span class="o">=</span> <span class="nx">createArray</span><span class="p">(</span><span class="mi">10000</span><span class="p">);</span>
+</span><span class='line'><span class="nv">$start</span> <span class="o">=</span> <span class="nb">microtime</span><span class="p">(</span><span class="k">TRUE</span><span class="p">);</span>
+</span><span class='line'><span class="nv">$sdata</span> <span class="o">=</span>  <span class="nx">json_encode</span><span class="p">(</span><span class="nv">$data</span><span class="p">);</span>  <span class="c1">//序列化</span>
+</span><span class='line'><span class="nb">file_put_contents</span><span class="p">(</span><span class="s2">&quot;js.php&quot;</span><span class="p">,</span> <span class="nv">$sdata</span><span class="p">);</span>
+</span><span class='line'><span class="nv">$end</span> <span class="o">=</span> <span class="nb">microtime</span><span class="p">(</span><span class="k">TRUE</span><span class="p">);</span>
+</span><span class='line'><span class="k">echo</span> <span class="s2">&quot;sertialize time:&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="k">echo</span> <span class="nv">$end</span> <span class="o">-</span> <span class="nv">$start</span><span class="p">;</span>
+</span><span class='line'><span class="k">echo</span> <span class="s2">&quot;(s), &quot;</span><span class="p">;</span>
+</span><span class='line'><span class="k">echo</span> <span class="s2">&quot;sertialize longth:&quot;</span><span class="o">.</span><span class="nb">strlen</span><span class="p">(</span><span class="nv">$sdata</span><span class="p">);</span>
+</span><span class='line'><span class="k">echo</span> <span class="s2">&quot;&lt;br/&gt;&quot;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$start</span> <span class="o">=</span> <span class="nb">microtime</span><span class="p">(</span><span class="k">TRUE</span><span class="p">);</span>
+</span><span class='line'><span class="nv">$rdata</span> <span class="o">=</span> <span class="nb">file_get_contents</span><span class="p">(</span><span class="s2">&quot;js.php&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="nv">$data</span> <span class="o">=</span> <span class="nx">json_decode</span><span class="p">(</span><span class="nv">$rdata</span><span class="err">，</span><span class="k">TRUE</span><span class="p">);</span>  <span class="c1">//反序列化，</span>
+</span><span class='line'><span class="nv">$end</span> <span class="o">=</span> <span class="nb">microtime</span><span class="p">(</span><span class="k">TRUE</span><span class="p">);</span>
+</span><span class='line'><span class="k">echo</span> <span class="s2">&quot;unserialize time:&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="k">echo</span> <span class="nv">$end</span> <span class="o">-</span> <span class="nv">$start</span><span class="p">;</span>
+</span><span class='line'><span class="k">echo</span> <span class="s2">&quot;(s)&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="cp">?&gt;</span><span class="x"></span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sertialize <span class="nb">time</span>:0.00067996978759766<span class="o">(</span>s<span class="o">)</span>, sertialize longth:48891
+</span><span class='line'>unserialize <span class="nb">time</span>:0.0031712055206299<span class="o">(</span>s<span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>从上面的几个小测试可以看出，json_encode 和 serialize 的转换效率其实是很接近的，但是因为
+json_encode 序列化后的数据会比serialize序列化的数据小很多（从测试数据比较少了3倍多），
+导致在写文本的时候，serialize方法比json_encode方法消耗多了很多时间。而thinkphp采用的文
+件缓存效率相对较低，也不清楚thinkphp是出于哪种原因而采用这种办法。希望Thinkphp以后会修改
+F方法的缓存方式。</p>
+</div>
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-05-28T22:08:00+08:00" pubdate data-updated="true">May 28<span>th</span>, 2012</time></div>
+        <div class="tags">
+
+<div class="cat">
+  
+    <a class='category' href='/blog/categories/php-serialize/'>php,serialize</a>
+  
+</div>
+
+</div>
+        
+    </div>
+</article>
+<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+	<script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid=xa-4eb4a0c47196e907"></script>
+</div>
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+	<footer class="inner">Copyright &copy; 2012 SK's Blog -
+<span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</footer>
+	<script src="/javascripts/jquery.easing.1.3.js"></script>
+<script src="/javascripts/jquery.fancybox.pack.js"></script>
+<script src="/javascripts/slash.js"></script>
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'skaic';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://sunkid.me/blog/2012/05/28/php-efficiency-of-serialize/';
+        var disqus_url = 'http://sunkid.me/blog/2012/05/28/php-efficiency-of-serialize/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+</body>
+</html>

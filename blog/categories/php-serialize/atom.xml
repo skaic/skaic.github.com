@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: php,serialize | SK's Blog]]></title>
+  <link href="http://sunkid.me/blog/categories/php-serialize/atom.xml" rel="self"/>
+  <link href="http://sunkid.me/"/>
+  <updated>2012-05-28T23:48:25+08:00</updated>
+  <id>http://sunkid.me/</id>
+  <author>
+    <name><![CDATA[sk.c]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[php 序列化的几种方法比较]]></title>
+    <link href="http://sunkid.me/blog/2012/05/28/php-efficiency-of-serialize/"/>
+    <updated>2012-05-28T22:08:00+08:00</updated>
+    <id>http://sunkid.me/blog/2012/05/28/php-efficiency-of-serialize</id>
+    <content type="html"><![CDATA[<p>最近看Thinkphp源码，看到里面的F函数，用var_export方法对数组进行序列化保存到文本来做缓存。
+这是头次见到的，有点疑惑是否TP的这种方法会不会快点呢？于是有了下面的几个小测试</p>
+
+<!--more-->
+
+
+<p>首先测试ThinkPHP的var_export对序列化和反序列化的效率
+```php ThinkPhp
+&lt;?php
+// 去除代码中的空白和注释
+//ThinkPhp 的函数
+function strip_whitespace($content) {</p>
+
+<pre><code>$stripStr = '';
+//分析php源码
+$tokens = token_get_all($content);
+$last_space = false;
+for ($i = 0, $j = count($tokens); $i &lt; $j; $i++) {
+    if (is_string($tokens[$i])) {
+        $last_space = false;
+        $stripStr .= $tokens[$i];
+    } else {
+        switch ($tokens[$i][0]) {
+            //过滤各种PHP注释
+            case T_COMMENT:
+            case T_DOC_COMMENT:
+                break;
+            //过滤空格
+            case T_WHITESPACE:
+                if (!$last_space) {
+                    $stripStr .= ' ';
+                    $last_space = true;
+                }
+                break;
+            case T_START_HEREDOC:
+                $stripStr .= "&lt;&lt;&lt;THINK\n";
+                break;
+            case T_END_HEREDOC:
+                $stripStr .= "THINK;\n";
+                for ($k = $i + 1; $k &lt; $j; $k++) {
+                    if (is_string($tokens[$k]) &amp;&amp; $tokens[$k] == ";") {
+                        $i = $k;
+                        break;
+                    } else if ($tokens[$k][0] == T_CLOSE_TAG) {
+                        break;
+                    }
+                }
+                break;
+            default:
+                $last_space = false;
+                $stripStr .= $tokens[$i][1];
+        }
+    }
+}
+return $stripStr;
+</code></pre>
+
+<p>}</p>
+
+<p>//创建数组函数
+function createArray($i){</p>
+
+<pre><code>$array = array();
+for($k=0;$k&lt;$i;$k++){
+    $array[$k] = $k; 
+}
+return $array;
+</code></pre>
+
+<p>}</p>
+
+<p>$data = createArray(10000);</p>
+
+<p>$start = microtime(TRUE);
+$sdata = var_export($data, true);
+file_put_contents("tp.php", strip_whitespace("&lt;?php\nreturn " . $sdata . ";\n?>"));
+$end = microtime(TRUE);
+echo "serialize time:";
+echo $end - $start;
+echo "(s), ";
+echo "serialize longth:".strlen($sdata);
+echo "<br/>";</p>
+
+<p>$start = microtime(TRUE);
+$data = include "tp.php";//反序列号
+$end = microtime(TRUE);
+echo "unserialize time:";
+echo $end - $start;
+echo "(s)";
+?>
+```</p>
+
+<p><code>bash
+serialize time:0.18270683288574(s), serialize longth:157789
+unserialize time:0.0076150894165039(s)
+</code></p>
+
+<p>由于上面的方法要把数据写入文件，所以为了做比较，下面的序列化和反序列化也都写到文件后再读出来，
+接着，测试的是传统serialize函数
+```php serialize
+&lt;?php
+function createArray($i){</p>
+
+<pre><code>$array = array();
+for($k=0;$k&lt;$i;$k++){
+    $array[$k] = $k; 
+}
+return $array;
+</code></pre>
+
+<p>}</p>
+
+<p>$data = createArray(10000);
+$start = microtime(TRUE);
+$sdata =  serialize($data); //序列化
+file_put_contents("se.php", $sdata);
+$end = microtime(TRUE);
+echo "sertialize time:";
+echo $end - $start;
+echo "(s), ";
+echo "sertialize longth:".strlen($sdata);
+echo "<br/>";</p>
+
+<p>$start = microtime(TRUE);
+$rdata = file_get_contents("se.php");
+$data = unserialize($rdata); //反序列化
+$end = microtime(TRUE);
+echo "unserialize time:";
+echo $end - $start;
+echo "(s)";
+?>
+```</p>
+
+<p><code>bash
+sertialize time:0.0031681060791016(s), sertialize longth:137790
+unserialize time:0.0037140846252441(s)
+</code></p>
+
+<p>再看看用json做序列化的效果
+```php json
+&lt;?php
+function createArray($i){</p>
+
+<pre><code>$array = array();
+for($k=0;$k&lt;$i;$k++){
+    $array[$k] = $k; 
+}
+return $array;
+</code></pre>
+
+<p>}</p>
+
+<p>$data = createArray(10000);
+$start = microtime(TRUE);
+$sdata =  json_encode($data);  //序列化
+file_put_contents("js.php", $sdata);
+$end = microtime(TRUE);
+echo "sertialize time:";
+echo $end - $start;
+echo "(s), ";
+echo "sertialize longth:".strlen($sdata);
+echo "<br/>";</p>
+
+<p>$start = microtime(TRUE);
+$rdata = file_get_contents("js.php");
+$data = json_decode($rdata，TRUE);  //反序列化，
+$end = microtime(TRUE);
+echo "unserialize time:";
+echo $end - $start;
+echo "(s)";
+?>
+```</p>
+
+<p><code>bash
+sertialize time:0.00067996978759766(s), sertialize longth:48891
+unserialize time:0.0031712055206299(s)
+</code></p>
+
+<p>从上面的几个小测试可以看出，json_encode 和 serialize 的转换效率其实是很接近的，但是因为
+json_encode 序列化后的数据会比serialize序列化的数据小很多（从测试数据比较少了3倍多），
+导致在写文本的时候，serialize方法比json_encode方法消耗多了很多时间。而thinkphp采用的文
+件缓存效率相对较低，也不清楚thinkphp是出于哪种原因而采用这种办法。希望Thinkphp以后会修改
+F方法的缓存方式。</p>
+]]></content>
+  </entry>
+  
+</feed>
