@@ -1,0 +1,534 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: php | SK's Blog]]></title>
+  <link href="http://sunkid.me/blog/categories/php/atom.xml" rel="self"/>
+  <link href="http://sunkid.me/"/>
+  <updated>2012-06-24T23:20:28+08:00</updated>
+  <id>http://sunkid.me/</id>
+  <author>
+    <name><![CDATA[sk.c]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[php 序列化的几种方法比较]]></title>
+    <link href="http://sunkid.me/blog/2012/05/28/php-efficiency-of-serialize/"/>
+    <updated>2012-05-28T22:08:00+08:00</updated>
+    <id>http://sunkid.me/blog/2012/05/28/php-efficiency-of-serialize</id>
+    <content type="html"><![CDATA[<p>最近看Thinkphp源码，看到里面的F函数，用var_export方法对数组进行序列化保存到文本来做缓存。
+这是头次见到的，有点疑惑是否TP的这种方法会不会快点呢？于是有了下面的几个小测试</p>
+
+<!--more-->
+
+
+<p>首先测试ThinkPHP的var_export对序列化和反序列化的效率
+```php ThinkPhp
+&lt;?php
+// 去除代码中的空白和注释
+//ThinkPhp 的函数
+function strip_whitespace($content) {</p>
+
+<pre><code>$stripStr = '';
+//分析php源码
+$tokens = token_get_all($content);
+$last_space = false;
+for ($i = 0, $j = count($tokens); $i &lt; $j; $i++) {
+    if (is_string($tokens[$i])) {
+        $last_space = false;
+        $stripStr .= $tokens[$i];
+    } else {
+        switch ($tokens[$i][0]) {
+            //过滤各种PHP注释
+            case T_COMMENT:
+            case T_DOC_COMMENT:
+                break;
+            //过滤空格
+            case T_WHITESPACE:
+                if (!$last_space) {
+                    $stripStr .= ' ';
+                    $last_space = true;
+                }
+                break;
+            case T_START_HEREDOC:
+                $stripStr .= "&lt;&lt;&lt;THINK\n";
+                break;
+            case T_END_HEREDOC:
+                $stripStr .= "THINK;\n";
+                for ($k = $i + 1; $k &lt; $j; $k++) {
+                    if (is_string($tokens[$k]) &amp;&amp; $tokens[$k] == ";") {
+                        $i = $k;
+                        break;
+                    } else if ($tokens[$k][0] == T_CLOSE_TAG) {
+                        break;
+                    }
+                }
+                break;
+            default:
+                $last_space = false;
+                $stripStr .= $tokens[$i][1];
+        }
+    }
+}
+return $stripStr;
+</code></pre>
+
+<p>}</p>
+
+<p>//创建数组函数
+function createArray($i){</p>
+
+<pre><code>$array = array();
+for($k=0;$k&lt;$i;$k++){
+    $array[$k] = $k; 
+}
+return $array;
+</code></pre>
+
+<p>}</p>
+
+<p>$data = createArray(10000);</p>
+
+<p>$start = microtime(TRUE);
+$sdata = var_export($data, true);
+file_put_contents("tp.php", strip_whitespace("&lt;?php\nreturn " . $sdata . ";\n?>"));
+$end = microtime(TRUE);
+echo "serialize time:";
+echo $end - $start;
+echo "(s), ";
+echo "serialize longth:".strlen($sdata);
+echo "<br/>";</p>
+
+<p>$start = microtime(TRUE);
+$data = include "tp.php";//反序列号
+$end = microtime(TRUE);
+echo "unserialize time:";
+echo $end - $start;
+echo "(s)";
+?>
+```</p>
+
+<p><code>bash
+serialize time:0.18270683288574(s), serialize longth:157789
+unserialize time:0.0076150894165039(s)
+</code></p>
+
+<p>由于上面的方法要把数据写入文件，所以为了做比较，下面的序列化和反序列化也都写到文件后再读出来，
+接着，测试的是传统serialize函数
+```php serialize
+&lt;?php
+function createArray($i){</p>
+
+<pre><code>$array = array();
+for($k=0;$k&lt;$i;$k++){
+    $array[$k] = $k; 
+}
+return $array;
+</code></pre>
+
+<p>}</p>
+
+<p>$data = createArray(10000);
+$start = microtime(TRUE);
+$sdata =  serialize($data); //序列化
+file_put_contents("se.php", $sdata);
+$end = microtime(TRUE);
+echo "sertialize time:";
+echo $end - $start;
+echo "(s), ";
+echo "sertialize longth:".strlen($sdata);
+echo "<br/>";</p>
+
+<p>$start = microtime(TRUE);
+$rdata = file_get_contents("se.php");
+$data = unserialize($rdata); //反序列化
+$end = microtime(TRUE);
+echo "unserialize time:";
+echo $end - $start;
+echo "(s)";
+?>
+```</p>
+
+<p><code>bash
+sertialize time:0.0031681060791016(s), sertialize longth:137790
+unserialize time:0.0037140846252441(s)
+</code></p>
+
+<p>再看看用json做序列化的效果
+```php json
+&lt;?php
+function createArray($i){</p>
+
+<pre><code>$array = array();
+for($k=0;$k&lt;$i;$k++){
+    $array[$k] = $k; 
+}
+return $array;
+</code></pre>
+
+<p>}</p>
+
+<p>$data = createArray(10000);
+$start = microtime(TRUE);
+$sdata =  json_encode($data);  //序列化
+file_put_contents("js.php", $sdata);
+$end = microtime(TRUE);
+echo "sertialize time:";
+echo $end - $start;
+echo "(s), ";
+echo "sertialize longth:".strlen($sdata);
+echo "<br/>";</p>
+
+<p>$start = microtime(TRUE);
+$rdata = file_get_contents("js.php");
+$data = json_decode($rdata，TRUE);  //反序列化，
+$end = microtime(TRUE);
+echo "unserialize time:";
+echo $end - $start;
+echo "(s)";
+?>
+```</p>
+
+<p><code>bash
+sertialize time:0.00067996978759766(s), sertialize longth:48891
+unserialize time:0.0031712055206299(s)
+</code></p>
+
+<p>从上面的几个小测试可以看出，json_encode 和 serialize 的转换效率其实是很接近的，但是因为
+json_encode 序列化后的数据会比serialize序列化的数据小很多（从测试数据比较少了3倍多），
+导致在写文本的时候，serialize方法比json_encode方法消耗多了很多时间。而thinkphp采用的文
+件缓存效率相对较低，也不清楚thinkphp是出于哪种原因而采用这种办法。希望Thinkphp以后会修改
+F方法的缓存方式。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[php5.4下安装drupal7.12的注意事项]]></title>
+    <link href="http://sunkid.me/blog/2012/04/28/install-drupal7-dot-12-for-php5-dot-4/"/>
+    <updated>2012-04-28T17:42:00+08:00</updated>
+    <id>http://sunkid.me/blog/2012/04/28/install-drupal7-dot-12-for-php5-dot-4</id>
+    <content type="html"><![CDATA[<p>自从在我的mac下把php升级到5.4后，就没少折腾过，这次折腾的是安装drupal 7.12。
+目前官网最新的版本，还没兼容php 5.4，需要我们自己打2个补丁，包括几个环境配置上
+需要注意的地方。</p>
+
+<p>我们先看下第一个报错信息和相应的补丁包</p>
+
+<p><code>
+Notice: Array to string conversion in menu_link_save()
+(line 3155 of /Users/skc/NetBeansProjects/drupal7/includes/menu.inc).
+</code></p>
+
+<p>这个错误的讨论可以看这里：<a href="http://drupal.org/node/1338282#comment-5719166">Fix php notice in menu_link_save( )</a></p>
+
+<p>我采用的解决补丁包是15#的这个：<a href="http://drupal.org/files/menu-link-save-1338282-15.patch">menu-link-save-1338282-15.patch</a></p>
+
+<!--more-->
+
+
+<p>给代码搭补丁的方式很简单，先下载patch文件到drupal的目录，然后执行命令</p>
+
+<p><code>bash
+patch -p2 &lt; menu-link-save-1338282-15.patch
+</code></p>
+
+<p>相关patch的命令资料也可以在这找到:<a href="http://study.chyangwa.com/IT/AIX/aixcmds4/patch.htm">patch</a></p>
+
+<p>你可能还会遇到这样的错误：</p>
+
+<p><code>
+Warning: Illegal string offset 'field' in DatabaseCondition-&gt;__clone()
+(line 1901 of /Users/skc/NetBeansProjects/drupal7/includes/database/query.inc).
+</code></p>
+
+<p>官网的讨论组也给出了相应的补丁包：<a href="http://drupal.org/files/database-query-clone-1414412.patch">database-query-clone-1414412.patch</a></p>
+
+<p>如果你在还没安装补丁包之前尝试了安装，可能会出现
+<a href="http://drupal.org/node/1171756#comment-5842376">“The 31 tables problem”</a>
+（数据库只生成了31张表）。如果你出现这种情况，可以通过下面几个步骤解决。</p>
+
+<pre><code>1. Clearing the database cache.
+2. Dropping and recreating the database.
+3. Making the entire directory tree (files and directories) world-writeable.
+4. setting apc.stat=1 (and restarting Apache).
+5. Setting wincache.ocenabled=0 (and restarting Apache).
+6. Clearing the browser cache.
+7. Switching among different browser families (Firefox, Chrome, IE) on different OSes (XP, Vista, Xubuntu).
+8. Not installing into a subdirectory of the document root.
+9. Only using the default .htaccess shipped with the source.
+10. Stripping all other content from the document root.
+</code></pre>
+
+<p>这就是我目前在自己环境下遇到的几个问题，也许在不同的环境又会有其他的问题。比较庆幸的是drupal官网的讨论相当热烈，在上面基本可以找到大部分问题的解决办法（其中很多解决办法是来自开发者提供的）。</p>
+
+<p>如果你遇到其他的问题，尽可试试在drupal讨论组寻找下答案 ^.^</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[php配置文件加载错误(php.ini)]]></title>
+    <link href="http://sunkid.me/blog/2012/04/16/php-configuration-file-path/"/>
+    <updated>2012-04-16T18:38:00+08:00</updated>
+    <id>http://sunkid.me/blog/2012/04/16/php-configuration-file-path</id>
+    <content type="html"><![CDATA[<p>最近在编译安装<a href="http://pecl.php.net/package/apc">APC</a>的时候，发现php一直加载不到APC模块。在确认编译没有错误后，开始从php上找问题。</p>
+
+<p>结果发现个很坑爹的事</p>
+
+<p><img src="/images/post/php_conf.jpg"></p>
+
+<p>php的info页面显示的配置文件位置和用php --ini 命令显示不同，这里php --ini显示的配置文件目录才是php真正的加载目录，
+导致我配置的时候编辑"/usr/local/ect/"目录下的php.ini一直没有生效，所以APC的模块也一直没加载到。</p>
+
+<p>而这个情况的起因原来是因为我重新configure,但没有make clean!!</p>
+
+<h3>囧</h3>
+
+<p>被自己坑了。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[php模拟数据包——自动签到]]></title>
+    <link href="http://sunkid.me/blog/2012/04/13/fake-http/"/>
+    <updated>2012-04-13T11:38:00+08:00</updated>
+    <id>http://sunkid.me/blog/2012/04/13/fake-http</id>
+    <content type="html"><![CDATA[<p>最近几个室友染上研究自动签到机的恶习。</p>
+
+<p>其中包括有用C写socket 接发伪http包的<a href="http://www.tinpont.com/">@tinpont</a></p>
+
+<p>有用javascript 在浏览器做类似XSS的自动登陆签到的<a href="http://www.jqyang.com/">@NewBie</a></p>
+
+<p>还有用au3 做模拟点击来签到的<a href="http://www.schance.com/">@SCbant</a>. (顺便在这鄙视上面2个做了后不写出来分享的童鞋.凸 凸)</p>
+
+<p>不甘落后，我也写个php版本的伪http包自动签到：）</p>
+
+<br/>
+
+
+<p>首先，分析下某网站的登陆页面和签到页面：</p>
+
+<!--more-->
+
+
+<h4>登陆页面：</h4>
+
+<p><img src="/images/post/fake_http_1.jpg" width="600" height="800"></p>
+
+<p>很容易我们已经获得了登陆的地址，接着开始找签到的地址。</p>
+
+<p>发现签到的按钮上是一段这样子的a连接
+``` html check_in_a
+<a class="checkin text" id="check_in" href="javascript:;" title=""></p>
+
+<pre><code>签到
+&lt;span&gt;Check in&lt;/span&gt;
+</code></pre>
+
+<p></a>
+```</p>
+
+<p>没有直接写明链接地址，于是从js入手找，方法很简单，在主页的代码上搜索这个按钮的id "check_in"</p>
+
+<p>很快可以找到该id绑定了一个点击触发函数,代码如下：
+``` javascript check_in_js
+$(function () {</p>
+
+<pre><code>    $("#check_in").click(function (e) {
+        e.preventDefault();
+        $(this).unbind('click');
+        //这个post的地址无疑就是签到的地址了
+        $.post('/task/signin',{},function(data) {
+            paint(data);
+            $("#check_in").click(function(){
+                unpaint();
+            });
+        });
+    });
+</code></pre>
+
+<p>});
+```</p>
+
+<p>这时，两个主要的地址我们已经找出来了。</p>
+
+<p>紧接着，通过浏览器登陆网站，正常签到。在这个过程的同时，我们需要截获登陆和签到的http数据包.
+这需要借助一些嗅探器，我在mac下用的是<a href="http://www.wireshark.org/download.html">Wireshark</a></p>
+
+<p>这是截获到登陆请求的数据包：</p>
+
+<p><img src="/images/post/fake_http_2.jpg" width="600" height="800"></p>
+
+<p>这是登陆成功后返回的数据包:</p>
+
+<p><img src="/images/post/fake_http_3.jpg" width="600" height="800"></p>
+
+<p>请求的数据包我们安着post的值封装发过去就可以了，这里我们主要分析下成功返回的数据包：</p>
+
+<p>首先返回的http状态是302重定向，带一个Set-Cookie：member_auth=xxxxxx<br/>
+我们第一次登陆要抓取的就是这个member_auth的值。</p>
+
+<p>我们接着看签到时候http包的行为</p>
+
+<p>截获到签到请求的数据包：</p>
+
+<p><img src="/images/post/fake_http_4.jpg" width="600" height="800"></p>
+
+<p>图片中的cookie只显示了一部分，附上完整的cookie值：
+<code>c cookie
+Cookie:cnzz_a921634=0; ltime=1334193113668; rtime=0; sin921634=none; __gads=ID=7c2eb69c29c523a2:T=1334193113:S=ALNI_Mb0TRs4TR3yexCHEW4kFeWwZLI1Zw; index_logined_hotmusic_tab=1; __utma=251084815.740794992.1334193113.1334193113.1334193113.1; __utmb=251084815.1.10.1334193113; __utmc=251084815; __utmz=251084815.1334193113.1.1.utmcsr=(direct)|utmccn=(direct)|utmcmd=(none); t_sign_auth=1; member_auth=7hjWn1eRWGaWJqK5kKzM%2BxaZJQkiW3UWiEO3hkVZTwkiFLpXlhVEuW%2BSpOTZz4%2BiLYNKMlw
+</code></p>
+
+<p>呃，这看上去有点多，而且这些数据不像是从服务器通过set-cookie过来的，猜测是通过js设置的cookie值。
+我选取了'__utmb'对在页面上的js进行搜索，结果在”http://www.google-analytics.com/ga.js“发现了这个值。</p>
+
+<p>到这里，我们知道这个是google analytics设置的cookie，对该网页的签到是不会影响。
+通过继续分析，我们可以排除大部分cookie,剩下的cookie值就是我们需要伪造的了：</p>
+
+<p><code>c cookie
+Cookie:index_logined_hotmusic_tab=1;t_sign_auth=1; member_auth=7hjWn1eRWGaWJqK5kKkiW3UWiEO3hkVZTwkiFLpXlhVEuW%2BSpOTZz4%2BiLYNKMlw
+</code></p>
+
+<p>通过继续对页面分析，发现，index_logined_hotmusic_tab的值在js中设置为常数1,t_sign_auth的值在打开首页的时候通过set-cookie得到。</p>
+
+<p>这时，我们只需要截获并伪造这三个cookie,就可以签到模拟请求了 ：）</p>
+
+<p>下面截获到签到请求成功返回的数据包：</p>
+
+<p><img src="/images/post/fake_http_5.jpg" width="600" height="800"></p>
+
+<p>到此，我们的http数据包就分析结束了，接下来就是编码的工作了,下面附上源码。</p>
+
+<p>```php Signin
+&lt;?php</p>
+
+<p>//配置文件，填写用户密码信息
+$logins = array(</p>
+
+<pre><code>array(
+"email" =&gt; 'xxxxx@qq.com',
+"password" =&gt; 'xxxx',
+),
+array(
+"email" =&gt; 'xxxx@qq.com',
+"password" =&gt; 'xxxx',
+),
+array(
+"email" =&gt; 'xxx@qq.com',
+"password" =&gt; 'xxxx',
+)
+</code></pre>
+
+<p>);</p>
+
+<p>//登陆网址
+$loginUrl = "http://www.xxx.com/member/login";
+//网址首页
+$Url = "http://www.xxx.com/";
+//签到网址
+$signinUrl = "http://www.xxxx.com/task/signin";</p>
+
+<p>//http头部，模拟浏览器行为
+$header = array(</p>
+
+<pre><code>"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_3) AppleWebKit/534.55.3 (KHTML, like Gecko) Version/5.1.5 Safari/534.55.3",
+"Origin: http://www.xxxx.com",
+"X-Requested-With: XMLHttpRequest",
+"Referer: http://www.xxxx.com/",
+"Accept-Language: zh-cn"
+</code></pre>
+
+<p>);</p>
+
+<p>foreach ($logins as $login) {</p>
+
+<pre><code>$email = $login['email'];
+$password = $login['password'];
+
+//模拟post数据包
+$postData = "email=".$email."&amp;password=".$password."&amp;autologin=1&amp;submit=%E7%99%BB+%E5%BD%95";
+
+//初始化CURL
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_POST, TRUE);
+curl_setopt($ch, CURLOPT_HEADER, TRUE);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+curl_setopt($ch, CURLINFO_HEADER_OUT, TRUE);
+curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+
+//设置post数据包
+curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
+
+/*   * *********************第一次发送模拟数据包请求*************************** */
+
+//设置请求地址    
+curl_setopt($ch, CURLOPT_URL, $loginUrl);
+
+//发送登陆请求
+$res = curl_exec($ch);
+
+//读取member_auth值
+preg_match('/^Set-Cookie: member_auth=(.*?);/m', $res, $member);
+
+//判断登陆是否成功
+if (!isset($member[1])) {
+    echo "[Error]:Login false($email)";
+    continue;
+}
+
+//模拟cookie数据
+$cookie = "member_auth=" . $member[1];
+
+/*   * *********************第二次发送模拟数据包请求*************************** */
+
+//设置cookie数据
+curl_setopt($ch, CURLOPT_COOKIE, $cookie);
+
+//设置请求地址    
+curl_setopt($ch, CURLOPT_URL, $Url);
+
+//发送首页请求
+$res = curl_exec($ch);
+
+//读取t_sign_auth值
+preg_match('/^Set-Cookie: t_sign_auth=(.*?);/m', $res, $t_sign);
+
+//判断登陆是否成功
+if (!isset($t_sign[1])) {
+    echo "[Error]: get t_sign_auth is false($email)";
+    continue;
+}
+
+//拼接cookie数据
+$cookie = $cookie . ";t_sign_auth=$t_sign[1];index_logined_hotmusic_tab=1";
+
+/*   * *********************第三次发送模拟数据包请求*************************** */
+
+//设置cookie数据
+curl_setopt($ch, CURLOPT_COOKIE, $cookie);
+
+//设置请求地址    
+curl_setopt($ch, CURLOPT_URL, $signinUrl);
+
+//发送首页请求
+$res = curl_exec($ch);
+
+echo "user:$email is ok!&lt;br/&gt;";
+
+//关闭连接
+curl_close($ch);
+</code></pre>
+
+<p>}
+?></p>
+
+<p>```
+最后的最后，有一个需要强调的是:</p>
+
+<h3>请不要转载，不要转载，不要转载，如果转载，请不要注明出处 -。-|||</h3>
+
+<p>好了，全文完！</p>
+]]></content>
+  </entry>
+  
+</feed>

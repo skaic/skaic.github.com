@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: linux,bash | SK's Blog]]></title>
-  <link href="http://sunkid.me/blog/categories/linux-bash/atom.xml" rel="self"/>
+  <title><![CDATA[Category: bash | SK's Blog]]></title>
+  <link href="http://sunkid.me/blog/categories/bash/atom.xml" rel="self"/>
   <link href="http://sunkid.me/"/>
-  <updated>2012-06-01T10:13:08+08:00</updated>
+  <updated>2012-06-24T23:20:28+08:00</updated>
   <id>http://sunkid.me/</id>
   <author>
     <name><![CDATA[sk.c]]></name>
