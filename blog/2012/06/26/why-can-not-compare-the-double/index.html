@@ -92,7 +92,7 @@ var_dump输出的两个值均为float(8.87)，明明是相同的，结果却给�
 *   指数(exponent) E是2的幂
 </code></pre>
 
-<p>浮点数的位表示被划分为三哥域，以编码这些值：</p>
+<p>浮点数的位表示被划分为三个域，以编码这些值：</p>
 
 <pre><code>*   一个单独的符号位s直接编码符号s
 *   k位的指数域,编码指数E
@@ -113,12 +113,13 @@ var_dump输出的两个值均为float(8.87)，明明是相同的，结果却给�
 
 <p><img src="/images/post/wd2.png"></p>
 
-<p>假定我们仅考虑有限长度的编码，那么十进制符号是不能准确表达像1/3,3/5这样的数，类似的，
-小数的二进制表示发只能表示那些能够被写成x * 2<sup>y</sup> 的数。其他的值只能近似地表达</p>
+<p>假定我们仅考虑有限长度的编码，那么十进制符号是不能准确表达像1/3,3/5这样的数，
+类似的，小数的二进制表示法只能表示那些能够被写成 x * 2<sup>y</sup> 的数。
+其他的值只能近似地表达</p>
 
 <p><strong>所以，这使得double在内存中只能保存近似值，以至于double的值不能直接进行等号比较</strong></p>
 
-<p>下面，我们在看看这样一个例子，实例来说明php中double是不能直接等号比较的 ：）</p>
+<p>下面，我们看看这样一个例子，实例来说明php中double是不能直接等号比较的 ：）</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -159,9 +160,9 @@ var_dump输出的两个值均为float(8.87)，明明是相同的，结果却给�
 
 
 <p>最后，可能有人会问上面比较式的阀值取多小为宜呢？ 这个值的选取我们可以根据IEEE公式中
-的M值大小得到一条这样的公式：</p>
+的M的位数得到一条这样的公式：</p>
 
-<pre><code>阀值 &gt;= 10^(k - M);
+<pre><code>阀值 &gt;= 2^(k - M);
 </code></pre>
 
 <p>由于浮点的运算还会带来部分的精度损失，所以建议 k > 2， 当然，如果你的项目对浮点的精度
