@@ -8,8 +8,8 @@
 	<meta http-equiv="cache-control" content="no-cache" >
 	<meta http-equiv="expires" content="Fri, 30 Dec 2011 12:00:00 GMT" >
     
-    <meta name="description" content="Php 序列化的几种方法比较 最近看Thinkphp源码，看到里面的F函数，用var_export方法对数组进行序列化保存到文本来做缓存。
-这是头次见到的，有点疑惑是否TP的这种方法会不会快点呢？于是有了下面的几个小测试 Read on &rarr; May 28th, 2012 php, &hellip;">
+    <meta name="description" content="为什么Double不能直接比较 今天在微薄看到这样的一个PHP的问题： 对@Laruence 说：一个怪现象，从数据库中读取的浮点型数据，并代码中floatval了，和php中的floatval数值比较，
+var_dump输出的两个值均为float(8.87)，明明是相同的， &hellip;">
     
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -69,6 +69,134 @@
 </header>
 	
 	<div id="content" class="inner">
+
+
+    <article class="post">
+    <h1 class="title"><a href="/blog/2012/06/26/why-can-not-compare-the-double/">为什么Double不能直接比较</a></h1>
+    <div class="entry">
+        <p>今天在微薄看到这样的一个PHP的问题：</p>
+
+<pre><code>对@Laruence 说：一个怪现象，从数据库中读取的浮点型数据，并代码中floatval了，和php中的floatval数值比较，
+var_dump输出的两个值均为float(8.87)，明明是相同的，结果却给出了不相等的答案。
+</code></pre>
+
+<p>又勾起之前的学c的知识，无奈好久没碰，渐渐生疏了。。担心日久真全忘了，只好烂烂笔头，写写博客，记录点东西下来。</p>
+
+<p>分析这个php的问题，我们先的从php的类型分析起，php是弱类型，关于php类型的内部结构，可以看<a href="http://www.laruence.com/2011/12/19/2399.html">这里</a></p>
+
+<p>现在，我们知道了php中的float类型是用c的double类型保存的。我们还得知道double类型在内存中是怎么表示的。</p>
+
+<p>浮点类型在内存中表示方式一般采用IEEE浮点规定( V = (-1)<sup>s</sup> x M x 2<sup>e</sup> )：</p>
+
+<pre><code>*   符号(sign) s决定数是负数还是正数
+*   有效数(significand) M是一个二进制小数
+*   指数(exponent) E是2的幂
+</code></pre>
+
+<p>浮点数的位表示被划分为三哥域，以编码这些值：</p>
+
+<pre><code>*   一个单独的符号位s直接编码符号s
+*   k位的指数域,编码指数E
+*   n位小数域,编码有效数M,但被编码的值也依赖于指数域的值是否等于零
+</code></pre>
+
+<p>在C语言的double中，s，exp和frac域分别为1位，11位和52位，产生一个64位的表示.</p>
+
+<p><img src="/images/post/IEEE_Double.bmp" width="600" height="800"></p>
+
+<p>了解了double在内存中的存储方式后，我们再看下 M 是如何用二进制保存小数的。</p>
+
+<p>我们首先先看下熟悉的十进制表示法,表达式描述的数d定义如下：</p>
+
+<p><img src="/images/post/wd1.png"></p>
+
+<p>类似的，十进制与二进制区别是单位取值范围0～9与0～1的不同，二进制的表达式描述的数b定义如下：</p>
+
+<p><img src="/images/post/wd2.png"></p>
+
+<p>假定我们仅考虑有限长度的编码，那么十进制符号是不能准确表达像1/3,3/5这样的数，类似的，
+小数的二进制表示发只能表示那些能够被写成x * 2<sup>y</sup> 的数。其他的值只能近似地表达</p>
+
+<p><strong>所以，这使得double在内存中只能保存近似值，以至于double的值不能直接进行等号比较</strong></p>
+
+<p>下面，我们在看看这样一个例子，实例来说明php中double是不能直接等号比较的 ：）</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="cp">&lt;?php</span>
+</span><span class='line'>  <span class="nv">$a</span> <span class="o">=</span> <span class="mf">2.2</span><span class="p">;</span>
+</span><span class='line'>  <span class="nv">$d</span> <span class="o">=</span> <span class="mf">0.3</span> <span class="o">+</span> <span class="mf">1.9</span><span class="p">;</span>
+</span><span class='line'>  <span class="nb">var_dump</span><span class="p">(</span><span class="nv">$a</span><span class="p">);</span>
+</span><span class='line'>  <span class="nb">var_dump</span><span class="p">(</span><span class="nv">$d</span><span class="p">);</span>
+</span><span class='line'>  <span class="c1">//错误示例，double不能直接用等号比较</span>
+</span><span class='line'>  <span class="nb">var_dump</span><span class="p">(</span><span class="nv">$a</span> <span class="o">==</span> <span class="nv">$d</span><span class="p">);</span>
+</span><span class='line'>  <span class="c1">//double类型常用的比较方法</span>
+</span><span class='line'>  <span class="c1">//0.000001是个阀值</span>
+</span><span class='line'>  <span class="nb">var_dump</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="nv">$a</span> <span class="o">-</span> <span class="nv">$d</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">0.000001</span><span class="p">);</span>
+</span><span class='line'><span class="cp">?&gt;</span><span class="x"></span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>输出的结果:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>float<span class="o">(</span>2.2<span class="o">)</span>
+</span><span class='line'>float<span class="o">(</span>2.2<span class="o">)</span>
+</span><span class='line'>bool<span class="o">(</span><span class="nb">false</span><span class="o">)</span>
+</span><span class='line'>bool<span class="o">(</span><span class="nb">true</span><span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>最后，可能有人会问上面比较式的阀值取多小为宜呢？ 这个值的选取我们可以根据IEEE公式中
+的M值大小得到一条这样的公式：</p>
+
+<pre><code>阀值 &gt;= 10^(k - M);
+</code></pre>
+
+<p>由于浮点的运算还会带来部分的精度损失，所以建议 k > 2， 当然，如果你的项目对浮点的精度
+要求不是很严格，那你也可以像我直接选用0.000001这样的值来使用。 ：）</p>
+
+        
+        
+    </div>
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-26T00:58:00+08:00" pubdate data-updated="true">Jun 26<span>th</span>, 2012</time></div>
+        <div class="tags">
+
+<div class="cat">
+  
+    <a class='category' href='/blog/categories/c-c-/'>c/c++</a>
+  
+</div>
+
+</div>
+        
+    </div>
+</article>
 
 
     <article class="post">

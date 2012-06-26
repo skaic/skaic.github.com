@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: c/c++ | SK's Blog]]></title>
+  <link href="http://sunkid.me/blog/categories/c-c-/atom.xml" rel="self"/>
+  <link href="http://sunkid.me/"/>
+  <updated>2012-06-26T11:54:16+08:00</updated>
+  <id>http://sunkid.me/</id>
+  <author>
+    <name><![CDATA[sk.c]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[为什么Double不能直接比较]]></title>
+    <link href="http://sunkid.me/blog/2012/06/26/why-can-not-compare-the-double/"/>
+    <updated>2012-06-26T00:58:00+08:00</updated>
+    <id>http://sunkid.me/blog/2012/06/26/why-can-not-compare-the-double</id>
+    <content type="html"><![CDATA[<p>今天在微薄看到这样的一个PHP的问题：</p>
+
+<pre><code>对@Laruence 说：一个怪现象，从数据库中读取的浮点型数据，并代码中floatval了，和php中的floatval数值比较，
+var_dump输出的两个值均为float(8.87)，明明是相同的，结果却给出了不相等的答案。
+</code></pre>
+
+<p>又勾起之前的学c的知识，无奈好久没碰，渐渐生疏了。。担心日久真全忘了，只好烂烂笔头，写写博客，记录点东西下来。</p>
+
+<p>分析这个php的问题，我们先的从php的类型分析起，php是弱类型，关于php类型的内部结构，可以看<a href="http://www.laruence.com/2011/12/19/2399.html">这里</a></p>
+
+<p>现在，我们知道了php中的float类型是用c的double类型保存的。我们还得知道double类型在内存中是怎么表示的。</p>
+
+<p>浮点类型在内存中表示方式一般采用IEEE浮点规定( V = (-1)<sup>s</sup> x M x 2<sup>e</sup> )：</p>
+
+<pre><code>*   符号(sign) s决定数是负数还是正数
+*   有效数(significand) M是一个二进制小数
+*   指数(exponent) E是2的幂
+</code></pre>
+
+<p>浮点数的位表示被划分为三哥域，以编码这些值：</p>
+
+<pre><code>*   一个单独的符号位s直接编码符号s
+*   k位的指数域,编码指数E
+*   n位小数域,编码有效数M,但被编码的值也依赖于指数域的值是否等于零
+</code></pre>
+
+<p>在C语言的double中，s，exp和frac域分别为1位，11位和52位，产生一个64位的表示.</p>
+
+<p><img src="/images/post/IEEE_Double.bmp" width="600" height="800"></p>
+
+<p>了解了double在内存中的存储方式后，我们再看下 M 是如何用二进制保存小数的。</p>
+
+<p>我们首先先看下熟悉的十进制表示法,表达式描述的数d定义如下：</p>
+
+<p><img src="/images/post/wd1.png"></p>
+
+<p>类似的，十进制与二进制区别是单位取值范围0～9与0～1的不同，二进制的表达式描述的数b定义如下：</p>
+
+<p><img src="/images/post/wd2.png"></p>
+
+<p>假定我们仅考虑有限长度的编码，那么十进制符号是不能准确表达像1/3,3/5这样的数，类似的，
+小数的二进制表示发只能表示那些能够被写成x * 2<sup>y</sup> 的数。其他的值只能近似地表达</p>
+
+<p><strong>所以，这使得double在内存中只能保存近似值，以至于double的值不能直接进行等号比较</strong></p>
+
+<p>下面，我们在看看这样一个例子，实例来说明php中double是不能直接等号比较的 ：）</p>
+
+<p>```php
+&lt;?php</p>
+
+<pre><code>$a = 2.2;
+$d = 0.3 + 1.9;
+var_dump($a);
+var_dump($d);
+//错误示例，double不能直接用等号比较
+var_dump($a == $d);
+//double类型常用的比较方法
+//0.000001是个阀值
+var_dump(abs($a - $d) &lt; 0.000001); 
+</code></pre>
+
+<p>?>
+```</p>
+
+<p>输出的结果:</p>
+
+<p><code>bash
+float(2.2)
+float(2.2)
+bool(false)
+bool(true)
+</code></p>
+
+<p>最后，可能有人会问上面比较式的阀值取多小为宜呢？ 这个值的选取我们可以根据IEEE公式中
+的M值大小得到一条这样的公式：</p>
+
+<pre><code>阀值 &gt;= 10^(k - M);
+</code></pre>
+
+<p>由于浮点的运算还会带来部分的精度损失，所以建议 k > 2， 当然，如果你的项目对浮点的精度
+要求不是很严格，那你也可以像我直接选用0.000001这样的值来使用。 ：）</p>
+]]></content>
+  </entry>
+  
+</feed>
