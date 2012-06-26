@@ -4,7 +4,7 @@
   <title><![CDATA[SK's Blog]]></title>
   <link href="http://sunkid.me/atom.xml" rel="self"/>
   <link href="http://sunkid.me/"/>
-  <updated>2012-06-26T11:54:16+08:00</updated>
+  <updated>2012-06-26T11:55:37+08:00</updated>
   <id>http://sunkid.me/</id>
   <author>
     <name><![CDATA[sk.c]]></name>
@@ -25,6 +25,9 @@ var_dump输出的两个值均为float(8.87)，明明是相同的，结果却给�
 </code></pre>
 
 <p>又勾起之前的学c的知识，无奈好久没碰，渐渐生疏了。。担心日久真全忘了，只好烂烂笔头，写写博客，记录点东西下来。</p>
+
+<!-- more -->
+
 
 <p>分析这个php的问题，我们先的从php的类型分析起，php是弱类型，关于php类型的内部结构，可以看<a href="http://www.laruence.com/2011/12/19/2399.html">这里</a></p>
 
