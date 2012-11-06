@@ -4,7 +4,7 @@
   <title><![CDATA[Category: linux | SK's Blog]]></title>
   <link href="http://sunkid.me/blog/categories/linux/atom.xml" rel="self"/>
   <link href="http://sunkid.me/"/>
-  <updated>2012-06-26T13:19:09+08:00</updated>
+  <updated>2012-11-06T14:15:50+08:00</updated>
   <id>http://sunkid.me/</id>
   <author>
     <name><![CDATA[sk.c]]></name>
@@ -12,6 +12,49 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[GIT SSH的权限问题]]></title>
+    <link href="http://sunkid.me/blog/2012/11/06/permission-for-git-ssh/"/>
+    <updated>2012-11-06T14:09:00+08:00</updated>
+    <id>http://sunkid.me/blog/2012/11/06/permission-for-git-ssh</id>
+    <content type="html"><![CDATA[<p>公司内部服务器部署git的话，通常会采用ssh的连接方式，部署方便，控制也容易。</p>
+
+<p>今天，我们说说用ssh要注意的用户权限设置问题。</p>
+
+<p>我们先建立一个ios组
+<code>
+groupadd ios
+</code></p>
+
+<p>给每个ios的工程师创建用户
+<code>
+useradd -g ios -G ios username
+</code></p>
+
+<p>创建你的git仓库
+<code>
+git init --bare --shared
+</code></p>
+
+<p>这里的--shared参数非常重要，它表示git文件的组用户有可写权限。
+楼主就有次忘记了加这个参数，结果导致工程师A提交的文件，工程师B
+可以查看到但无法修改提交。</p>
+
+<p>当然，如果你已经创建好git仓库后发现忘记加 --shared 参数。
+你也可以直接修改config文件,在core下添加这一句</p>
+
+<p>```
+[core]</p>
+
+<pre><code>sharedrepository = 1
+</code></pre>
+
+<p>```</p>
+
+<p>git的配置是不是也很简单呢 XD</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[linux下的回收站]]></title>
