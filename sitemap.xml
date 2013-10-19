@@ -18,7 +18,7 @@
     </url>
     <url>
         <loc>http://sunkid.me/blog/2012/04/16/php-configuration-file-path/</loc>
-        <lastmod>2012-06-24T01:25:51+08:00</lastmod>
+        <lastmod>2012-11-08T16:18:58+08:00</lastmod>
     </url>
     <url>
         <loc>http://sunkid.me/blog/2012/04/28/install-drupal7-dot-12-for-php5-dot-4/</loc>
@@ -41,15 +41,19 @@
         <lastmod>2012-11-06T14:15:49+08:00</lastmod>
     </url>
     <url>
+        <loc>http://sunkid.me/blog/2013/10/18/syn-flooddos/</loc>
+        <lastmod>2013-10-19T12:28:58+08:00</lastmod>
+    </url>
+    <url>
         <loc>http://sunkid.me/blog/archives/</loc>
-        <lastmod>2012-11-06T14:15:49+08:00</lastmod>
+        <lastmod>2013-10-19T12:28:58+08:00</lastmod>
     </url>
     <url>
         <loc>http://sunkid.me/blog/categories/</loc>
-        <lastmod>2012-11-06T14:15:49+08:00</lastmod>
+        <lastmod>2013-10-19T12:28:58+08:00</lastmod>
     </url>
     <url>
         <loc>http://sunkid.me/</loc>
-        <lastmod>2012-11-06T14:15:49+08:00</lastmod>
+        <lastmod>2013-10-19T12:28:58+08:00</lastmod>
     </url>
 </urlset>

