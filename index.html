@@ -8,8 +8,10 @@
 	<meta http-equiv="cache-control" content="no-cache" >
 	<meta http-equiv="expires" content="Fri, 30 Dec 2011 12:00:00 GMT" >
     
-    <meta name="description" content="Syn Flood(syn 洪水) 攻防实战 说到 syn洪水 大家应该都不陌生。 sk.c之前听说过其中的原理，但也没真枪实弹试过。
-到最近在学习服务器调优才实践尝试了下，才有了这篇烂笔头博文，有说的不对的地方，还请赐教 一开始，我们还是再唠叨下 syn flood doc 的原理: 1. &hellip;">
+    <meta name="description" content="Php书籍整理 感谢这些PHP书籍作者们的无私奉献，PHP因为有你更出色 :) 必读 PHP之道
+PHP调试技术手册
+PHP 最佳实践
+高级PHP应用程序漏洞审核技术 Read on &rarr; Nov 5th, 2013 php Syn Flood(syn 洪水) 攻防实战 说到 syn洪水 &hellip;">
     
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -69,6 +71,54 @@
 </header>
 	
 	<div id="content" class="inner">
+
+
+    <article class="post">
+    <h1 class="title"><a href="/blog/2013/11/05/php-book/">Php书籍整理</a></h1>
+    <div class="entry">
+        <pre><code>感谢这些PHP书籍作者们的无私奉献，PHP因为有你更出色 :)
+</code></pre>
+
+<h3>必读</h3>
+
+<ul>
+<li><a href="http://wulijun.github.io/php-the-right-way/">PHP之道</a></li>
+<li><a href="http://www.laruence.com/2010/06/21/1608.html">PHP调试技术手册</a></li>
+<li><a href="http://phpbestpractices.justjavac.com/">PHP 最佳实践</a></li>
+<li><a href="https://code.google.com/p/pasc2at/wiki/SimplifiedChinese">高级PHP应用程序漏洞审核技术</a></li>
+</ul>
+
+
+
+        
+        <a href="/blog/2013/11/05/php-book/" class="more-link">Read on &rarr;</a>
+    </div>
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-11-05T12:18:00+08:00" pubdate data-updated="true">Nov 5<span>th</span>, 2013</time></div>
+        <div class="tags">
+
+<div class="cat">
+  
+    <a class='category' href='/blog/categories/php/'>php</a>
+  
+</div>
+
+</div>
+        
+    </div>
+</article>
 
 
     <article class="post">
@@ -550,125 +600,6 @@ var_dump输出的两个值均为float(8.87)，明明是相同的，结果却给�
 
 
 <time datetime="2012-04-09T19:19:00+08:00" pubdate data-updated="true">Apr 9<span>th</span>, 2012</time></div>
-        <div class="tags">
-
-<div class="cat">
-  
-    <a class='category' href='/blog/categories/acm/'>acm</a>
-  
-</div>
-
-</div>
-        
-    </div>
-</article>
-
-
-    <article class="post">
-    <h1 class="title"><a href="/blog/2012/04/08/2012-gdit-contest/">2012 GDIT校内模拟赛</a></h1>
-    <div class="entry">
-        <p>今年的广东省赛提前了一个月在华南农业大学进行，珠海市市赛延迟到5月，不知道今年acm协会是
-怎么安排的-。-</p>
-
-<p>说回来，前几天老师说弄场校内模拟赛测试下，为了公平，这次选题就由不参加的我挑选了。
-比赛题目全部是由杭电的题库选取的，总体说题目还是偏简单的，水分偏多，这是考虑到大一
-的学生接触的时间比较短，所以这套题目应该还算合适的。</p>
-
-<p>下面是这次模拟赛的题解:</p>
-
-<h3>Problem 1001</h3>
-
-<p>题目地址：<a href="http://acm.hdu.edu.cn/showproblem.php?pid=1003">Max Sum</a></p>
-
-<p>这是道经典的动态规划题目，我最初学动态规划完成的就是这道题了，题意是求最大连续子序列和。</p>
-
-<p>状态转移方程是：DP[i] = max{DP[i-1]+data[i],0},最后,DP数组中最大的值就是答案了。</p>
-
-<p>代码：</p>
-
-<figure class='code'><figcaption><span>Problem 1001</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include&lt;stdio.h&gt;</span>
-</span><span class='line'><span class="cp">#include&lt;malloc.h&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>    <span class="kt">short</span> <span class="kt">int</span> <span class="n">a</span><span class="p">;</span>
-</span><span class='line'>    <span class="kt">int</span> <span class="n">t</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">x</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">max</span><span class="p">,</span><span class="n">sum</span><span class="p">,</span><span class="n">right</span><span class="p">,</span><span class="n">letf</span><span class="p">,</span><span class="n">b</span><span class="p">;</span>
-</span><span class='line'>    <span class="n">scanf</span><span class="p">(</span><span class="s">&quot;%d&quot;</span><span class="p">,</span><span class="o">&amp;</span><span class="n">t</span><span class="p">);</span>
-</span><span class='line'>    <span class="k">while</span><span class="p">(</span><span class="n">t</span><span class="o">--</span><span class="p">)</span>
-</span><span class='line'>    <span class="p">{</span>
-</span><span class='line'>        <span class="n">scanf</span><span class="p">(</span><span class="s">&quot;%d&quot;</span><span class="p">,</span><span class="o">&amp;</span><span class="n">n</span><span class="p">);</span>
-</span><span class='line'>        <span class="k">for</span><span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="n">b</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">max</span><span class="o">=-</span><span class="mi">1001</span><span class="p">,</span><span class="n">sum</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">n</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">)</span>
-</span><span class='line'>        <span class="p">{</span>
-</span><span class='line'>            <span class="n">scanf</span><span class="p">(</span><span class="s">&quot;%d&quot;</span><span class="p">,</span><span class="o">&amp;</span><span class="n">a</span><span class="p">);</span>
-</span><span class='line'>            <span class="k">if</span><span class="p">(</span><span class="n">max</span><span class="o">&lt;</span><span class="n">sum</span><span class="o">+</span><span class="n">a</span><span class="p">)</span>
-</span><span class='line'>            <span class="p">{</span>
-</span><span class='line'>                <span class="n">max</span><span class="o">=</span><span class="n">sum</span><span class="o">+</span><span class="n">a</span><span class="p">;</span>
-</span><span class='line'>                <span class="n">letf</span><span class="o">=</span><span class="n">b</span><span class="p">;</span>
-</span><span class='line'>                <span class="n">right</span><span class="o">=</span><span class="n">i</span><span class="p">;</span>
-</span><span class='line'>            <span class="p">}</span>
-</span><span class='line'>            <span class="n">sum</span><span class="o">+=</span><span class="n">a</span><span class="p">;</span>
-</span><span class='line'>            <span class="k">if</span><span class="p">(</span><span class="n">sum</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">)</span>
-</span><span class='line'>            <span class="p">{</span>
-</span><span class='line'>                <span class="n">b</span><span class="o">=</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span>
-</span><span class='line'>                <span class="n">sum</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
-</span><span class='line'>            <span class="p">}</span>
-</span><span class='line'>        <span class="p">}</span>
-</span><span class='line'>        <span class="n">printf</span><span class="p">(</span><span class="n">t</span><span class="o">?</span><span class="s">&quot;Case %d:</span><span class="se">\n</span><span class="s">%d %d %d</span><span class="se">\n\n</span><span class="s">&quot;</span><span class="o">:</span><span class="s">&quot;Case %d:</span><span class="se">\n</span><span class="s">%d %d %d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">x</span><span class="o">++</span><span class="p">,</span><span class="n">max</span><span class="p">,</span><span class="n">letf</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">right</span><span class="o">+</span><span class="mi">1</span><span class="p">);</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'>    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-        
-        <a href="/blog/2012/04/08/2012-gdit-contest/" class="more-link">Read on &rarr;</a>
-    </div>
-    <div class="meta">
-        <div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-04-08T21:09:00+08:00" pubdate data-updated="true">Apr 8<span>th</span>, 2012</time></div>
         <div class="tags">
 
 <div class="cat">
