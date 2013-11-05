@@ -4,7 +4,7 @@
   <title><![CDATA[SK's Blog]]></title>
   <link href="http://sunkid.me/atom.xml" rel="self"/>
   <link href="http://sunkid.me/"/>
-  <updated>2013-11-05T17:52:47+08:00</updated>
+  <updated>2013-11-05T18:26:02+08:00</updated>
   <id>http://sunkid.me/</id>
   <author>
     <name><![CDATA[sk.c]]></name>
@@ -18,7 +18,7 @@
     <link href="http://sunkid.me/blog/2013/11/05/php-book/"/>
     <updated>2013-11-05T12:18:00+08:00</updated>
     <id>http://sunkid.me/blog/2013/11/05/php-book</id>
-    <content type="html"><![CDATA[<pre><code>感谢这些PHP书籍作者们的无私奉献，PHP因为有你更出色 :)
+    <content type="html"><![CDATA[<pre><code>感谢这些PHP书籍作者和博客们的无私奉献，PHP因为有你更出色 :)
 </code></pre>
 
 <h3>必读</h3>
@@ -37,9 +37,18 @@
 <h3>深入</h3>
 
 <ul>
-<li><a href="http://www.laruence.com/">风雪之隅</a></li>
 <li><a href="https://github.com/walu/phpbook">PHP扩展开发及内核应用</a></li>
 <li><a href="https://github.com/reeze/tipi">深入理解PHP内核</a></li>
+</ul>
+
+
+<h3>博客</h3>
+
+<ul>
+<li><a href="http://www.laruence.com/">风雪之隅</a></li>
+<li><a href="http://blog.csdn.net/heiyeshuwu">黑夜路人</a></li>
+<li><a href="http://yanbin.org/">抚琴居</a></li>
+<li><a href="http://www.imsiren.com/">斯人博客</a></li>
 </ul>
 
 ]]></content>
