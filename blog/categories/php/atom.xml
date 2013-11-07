@@ -4,7 +4,7 @@
   <title><![CDATA[Category: php | SK's Blog]]></title>
   <link href="http://sunkid.me/blog/categories/php/atom.xml" rel="self"/>
   <link href="http://sunkid.me/"/>
-  <updated>2013-11-05T18:26:02+08:00</updated>
+  <updated>2013-11-07T17:17:39+08:00</updated>
   <id>http://sunkid.me/</id>
   <author>
     <name><![CDATA[sk.c]]></name>
@@ -28,6 +28,7 @@
 <li><a href="http://www.laruence.com/2010/06/21/1608.html">PHP调试技术手册</a></li>
 <li><a href="http://phpbestpractices.justjavac.com/">PHP 最佳实践</a></li>
 <li><a href="https://code.google.com/p/pasc2at/wiki/SimplifiedChinese">高级PHP应用程序漏洞审核技术</a></li>
+<li><a href="http://feiyang.me/2013/03/php-psr-in-chinese/">PHP的PSR规范中文版</a></li>
 </ul>
 
 
