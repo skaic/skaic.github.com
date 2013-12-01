@@ -4,7 +4,7 @@
   <title><![CDATA[SK's Blog]]></title>
   <link href="http://sunkid.me/atom.xml" rel="self"/>
   <link href="http://sunkid.me/"/>
-  <updated>2013-11-18T15:09:24+08:00</updated>
+  <updated>2013-12-01T15:36:53+08:00</updated>
   <id>http://sunkid.me/</id>
   <author>
     <name><![CDATA[sk.c]]></name>
@@ -40,6 +40,7 @@
 <ul>
 <li><a href="https://github.com/walu/phpbook">PHP扩展开发及内核应用</a></li>
 <li><a href="https://github.com/reeze/tipi">深入理解PHP内核</a></li>
+<li><a href="http://www.php.net/manual/zh/internals2.php">php核心:骇客指南</a></li>
 </ul>
 
 
