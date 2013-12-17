@@ -4,7 +4,7 @@
   <title><![CDATA[Category: php | SK's Blog]]></title>
   <link href="http://sunkid.me/blog/categories/php/atom.xml" rel="self"/>
   <link href="http://sunkid.me/"/>
-  <updated>2013-12-01T15:36:53+08:00</updated>
+  <updated>2013-12-11T14:40:29+08:00</updated>
   <id>http://sunkid.me/</id>
   <author>
     <name><![CDATA[sk.c]]></name>
@@ -12,6 +12,19 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[php扩展练习]]></title>
+    <link href="http://sunkid.me/blog/2013/12/11/php-ext-1/"/>
+    <updated>2013-12-11T11:13:00+08:00</updated>
+    <id>http://sunkid.me/blog/2013/12/11/php-ext-1</id>
+    <content type="html"><![CDATA[<p>关于php扩展的资料已经很丰富了，在<a href="http://sunkid.me/blog/2013/11/05/php-book/">这里</a>你可以系统的学习到这些知识。</p>
+
+<p>所以本系列的文章不会全面细致的解释这些用法，而是通过一些简单的用例，巩固上面学到的知识。</p>
+
+<p>你可以在<a href="">这里</a>找到整个练习项目的源码，希望对你有用 :)</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Php书籍整理]]></title>
@@ -328,249 +341,6 @@ Warning: Illegal string offset 'field' in DatabaseCondition-&gt;__clone()
 <h3>囧</h3>
 
 <p>被自己坑了。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[php模拟数据包——自动签到]]></title>
-    <link href="http://sunkid.me/blog/2012/04/13/fake-http/"/>
-    <updated>2012-04-13T11:38:00+08:00</updated>
-    <id>http://sunkid.me/blog/2012/04/13/fake-http</id>
-    <content type="html"><![CDATA[<p>最近几个室友染上研究自动签到机的恶习。</p>
-
-<p>其中包括有用C写socket 接发伪http包的<a href="http://www.tinpont.com/">@tinpont</a></p>
-
-<p>有用javascript 在浏览器做类似XSS的自动登陆签到的<a href="http://www.jqyang.com/">@NewBie</a></p>
-
-<p>还有用au3 做模拟点击来签到的<a href="http://www.schance.com/">@SCbant</a>. (顺便在这鄙视上面2个做了后不写出来分享的童鞋.凸 凸)</p>
-
-<p>不甘落后，我也写个php版本的伪http包自动签到：）</p>
-
-<br/>
-
-
-<p>首先，分析下某网站的登陆页面和签到页面：</p>
-
-<!--more-->
-
-
-<h4>登陆页面：</h4>
-
-<p><img src="/images/post/fake_http_1.jpg" width="600" height="800"></p>
-
-<p>很容易我们已经获得了登陆的地址，接着开始找签到的地址。</p>
-
-<p>发现签到的按钮上是一段这样子的a连接
-``` html check_in_a
-<a class="checkin text" id="check_in" href="javascript:;" title=""></p>
-
-<pre><code>签到
-&lt;span&gt;Check in&lt;/span&gt;
-</code></pre>
-
-<p></a>
-```</p>
-
-<p>没有直接写明链接地址，于是从js入手找，方法很简单，在主页的代码上搜索这个按钮的id "check_in"</p>
-
-<p>很快可以找到该id绑定了一个点击触发函数,代码如下：
-``` javascript check_in_js
-$(function () {</p>
-
-<pre><code>    $("#check_in").click(function (e) {
-        e.preventDefault();
-        $(this).unbind('click');
-        //这个post的地址无疑就是签到的地址了
-        $.post('/task/signin',{},function(data) {
-            paint(data);
-            $("#check_in").click(function(){
-                unpaint();
-            });
-        });
-    });
-</code></pre>
-
-<p>});
-```</p>
-
-<p>这时，两个主要的地址我们已经找出来了。</p>
-
-<p>紧接着，通过浏览器登陆网站，正常签到。在这个过程的同时，我们需要截获登陆和签到的http数据包.
-这需要借助一些嗅探器，我在mac下用的是<a href="http://www.wireshark.org/download.html">Wireshark</a></p>
-
-<p>这是截获到登陆请求的数据包：</p>
-
-<p><img src="/images/post/fake_http_2.jpg" width="600" height="800"></p>
-
-<p>这是登陆成功后返回的数据包:</p>
-
-<p><img src="/images/post/fake_http_3.jpg" width="600" height="800"></p>
-
-<p>请求的数据包我们安着post的值封装发过去就可以了，这里我们主要分析下成功返回的数据包：</p>
-
-<p>首先返回的http状态是302重定向，带一个Set-Cookie：member_auth=xxxxxx<br/>
-我们第一次登陆要抓取的就是这个member_auth的值。</p>
-
-<p>我们接着看签到时候http包的行为</p>
-
-<p>截获到签到请求的数据包：</p>
-
-<p><img src="/images/post/fake_http_4.jpg" width="600" height="800"></p>
-
-<p>图片中的cookie只显示了一部分，附上完整的cookie值：
-<code>c cookie
-Cookie:cnzz_a921634=0; ltime=1334193113668; rtime=0; sin921634=none; __gads=ID=7c2eb69c29c523a2:T=1334193113:S=ALNI_Mb0TRs4TR3yexCHEW4kFeWwZLI1Zw; index_logined_hotmusic_tab=1; __utma=251084815.740794992.1334193113.1334193113.1334193113.1; __utmb=251084815.1.10.1334193113; __utmc=251084815; __utmz=251084815.1334193113.1.1.utmcsr=(direct)|utmccn=(direct)|utmcmd=(none); t_sign_auth=1; member_auth=7hjWn1eRWGaWJqK5kKzM%2BxaZJQkiW3UWiEO3hkVZTwkiFLpXlhVEuW%2BSpOTZz4%2BiLYNKMlw
-</code></p>
-
-<p>呃，这看上去有点多，而且这些数据不像是从服务器通过set-cookie过来的，猜测是通过js设置的cookie值。
-我选取了'__utmb'对在页面上的js进行搜索，结果在”http://www.google-analytics.com/ga.js“发现了这个值。</p>
-
-<p>到这里，我们知道这个是google analytics设置的cookie，对该网页的签到是不会影响。
-通过继续分析，我们可以排除大部分cookie,剩下的cookie值就是我们需要伪造的了：</p>
-
-<p><code>c cookie
-Cookie:index_logined_hotmusic_tab=1;t_sign_auth=1; member_auth=7hjWn1eRWGaWJqK5kKkiW3UWiEO3hkVZTwkiFLpXlhVEuW%2BSpOTZz4%2BiLYNKMlw
-</code></p>
-
-<p>通过继续对页面分析，发现，index_logined_hotmusic_tab的值在js中设置为常数1,t_sign_auth的值在打开首页的时候通过set-cookie得到。</p>
-
-<p>这时，我们只需要截获并伪造这三个cookie,就可以签到模拟请求了 ：）</p>
-
-<p>下面截获到签到请求成功返回的数据包：</p>
-
-<p><img src="/images/post/fake_http_5.jpg" width="600" height="800"></p>
-
-<p>到此，我们的http数据包就分析结束了，接下来就是编码的工作了,下面附上源码。</p>
-
-<p>```php Signin
-&lt;?php</p>
-
-<p>//配置文件，填写用户密码信息
-$logins = array(</p>
-
-<pre><code>array(
-"email" =&gt; 'xxxxx@qq.com',
-"password" =&gt; 'xxxx',
-),
-array(
-"email" =&gt; 'xxxx@qq.com',
-"password" =&gt; 'xxxx',
-),
-array(
-"email" =&gt; 'xxx@qq.com',
-"password" =&gt; 'xxxx',
-)
-</code></pre>
-
-<p>);</p>
-
-<p>//登陆网址
-$loginUrl = "http://www.xxx.com/member/login";
-//网址首页
-$Url = "http://www.xxx.com/";
-//签到网址
-$signinUrl = "http://www.xxxx.com/task/signin";</p>
-
-<p>//http头部，模拟浏览器行为
-$header = array(</p>
-
-<pre><code>"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_3) AppleWebKit/534.55.3 (KHTML, like Gecko) Version/5.1.5 Safari/534.55.3",
-"Origin: http://www.xxxx.com",
-"X-Requested-With: XMLHttpRequest",
-"Referer: http://www.xxxx.com/",
-"Accept-Language: zh-cn"
-</code></pre>
-
-<p>);</p>
-
-<p>foreach ($logins as $login) {</p>
-
-<pre><code>$email = $login['email'];
-$password = $login['password'];
-
-//模拟post数据包
-$postData = "email=".$email."&amp;password=".$password."&amp;autologin=1&amp;submit=%E7%99%BB+%E5%BD%95";
-
-//初始化CURL
-$ch = curl_init();
-curl_setopt($ch, CURLOPT_POST, TRUE);
-curl_setopt($ch, CURLOPT_HEADER, TRUE);
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-curl_setopt($ch, CURLINFO_HEADER_OUT, TRUE);
-curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
-
-//设置post数据包
-curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
-
-/*   * *********************第一次发送模拟数据包请求*************************** */
-
-//设置请求地址    
-curl_setopt($ch, CURLOPT_URL, $loginUrl);
-
-//发送登陆请求
-$res = curl_exec($ch);
-
-//读取member_auth值
-preg_match('/^Set-Cookie: member_auth=(.*?);/m', $res, $member);
-
-//判断登陆是否成功
-if (!isset($member[1])) {
-    echo "[Error]:Login false($email)";
-    continue;
-}
-
-//模拟cookie数据
-$cookie = "member_auth=" . $member[1];
-
-/*   * *********************第二次发送模拟数据包请求*************************** */
-
-//设置cookie数据
-curl_setopt($ch, CURLOPT_COOKIE, $cookie);
-
-//设置请求地址    
-curl_setopt($ch, CURLOPT_URL, $Url);
-
-//发送首页请求
-$res = curl_exec($ch);
-
-//读取t_sign_auth值
-preg_match('/^Set-Cookie: t_sign_auth=(.*?);/m', $res, $t_sign);
-
-//判断登陆是否成功
-if (!isset($t_sign[1])) {
-    echo "[Error]: get t_sign_auth is false($email)";
-    continue;
-}
-
-//拼接cookie数据
-$cookie = $cookie . ";t_sign_auth=$t_sign[1];index_logined_hotmusic_tab=1";
-
-/*   * *********************第三次发送模拟数据包请求*************************** */
-
-//设置cookie数据
-curl_setopt($ch, CURLOPT_COOKIE, $cookie);
-
-//设置请求地址    
-curl_setopt($ch, CURLOPT_URL, $signinUrl);
-
-//发送首页请求
-$res = curl_exec($ch);
-
-echo "user:$email is ok!&lt;br/&gt;";
-
-//关闭连接
-curl_close($ch);
-</code></pre>
-
-<p>}
-?></p>
-
-<p>```
-最后的最后，有一个需要强调的是:</p>
-
-<h3>请不要转载，不要转载，不要转载，如果转载，请不要注明出处 -。-|||</h3>
-
-<p>好了，全文完！</p>
 ]]></content>
   </entry>
   
