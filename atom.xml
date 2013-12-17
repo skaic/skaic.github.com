@@ -4,7 +4,7 @@
   <title><![CDATA[SK's Blog]]></title>
   <link href="http://sunkid.me/atom.xml" rel="self"/>
   <link href="http://sunkid.me/"/>
-  <updated>2013-12-17T15:47:36+08:00</updated>
+  <updated>2013-12-17T16:17:23+08:00</updated>
   <id>http://sunkid.me/</id>
   <author>
     <name><![CDATA[sk.c]]></name>
@@ -12,18 +12,6 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
-  
-  <entry>
-    <title type="html"><![CDATA[php扩展练习]]></title>
-    <link href="http://sunkid.me/blog/2013/12/11/php-ext-1/"/>
-    <updated>2013-12-11T11:13:00+08:00</updated>
-    <id>http://sunkid.me/blog/2013/12/11/php-ext-1</id>
-    <content type="html"><![CDATA[<p>关于php扩展的资料已经很丰富了，你可以在<a href="http://sunkid.me/blog/2013/11/05/php-book/">这里</a>找到系统学习的资源。</p>
-
-<p>纸上得来终觉浅 绝知此事要躬行。为此创建了个练习项目来巩固上面学到的知识。
-源码放在<a href="https://github.com/skaic/sunkid_phpext">这里</a>, 希望对你也有用 :)</p>
-]]></content>
-  </entry>
   
   <entry>
     <title type="html"><![CDATA[Php书籍整理]]></title>

@@ -4,7 +4,7 @@
   <title><![CDATA[Category: http | SK's Blog]]></title>
   <link href="http://sunkid.me/blog/categories/http/atom.xml" rel="self"/>
   <link href="http://sunkid.me/"/>
-  <updated>2013-12-17T15:47:36+08:00</updated>
+  <updated>2013-12-17T16:18:18+08:00</updated>
   <id>http://sunkid.me/</id>
   <author>
     <name><![CDATA[sk.c]]></name>
@@ -38,7 +38,7 @@
 
 <h4>登陆页面：</h4>
 
-<p><img src="/images/post/fake_http_1.jpg" width="600" height="800"></p>
+<p>{% img /images/post/fake_http_1.jpg 600 800 %}</p>
 
 <p>很容易我们已经获得了登陆的地址，接着开始找签到的地址。</p>
 
@@ -82,11 +82,11 @@ $(function () {</p>
 
 <p>这是截获到登陆请求的数据包：</p>
 
-<p><img src="/images/post/fake_http_2.jpg" width="600" height="800"></p>
+<p>{% img /images/post/fake_http_2.jpg 600 800 %}</p>
 
 <p>这是登陆成功后返回的数据包:</p>
 
-<p><img src="/images/post/fake_http_3.jpg" width="600" height="800"></p>
+<p>{% img /images/post/fake_http_3.jpg 600 800 %}</p>
 
 <p>请求的数据包我们安着post的值封装发过去就可以了，这里我们主要分析下成功返回的数据包：</p>
 
@@ -97,7 +97,7 @@ $(function () {</p>
 
 <p>截获到签到请求的数据包：</p>
 
-<p><img src="/images/post/fake_http_4.jpg" width="600" height="800"></p>
+<p>{% img /images/post/fake_http_4.jpg 600 800 %}</p>
 
 <p>图片中的cookie只显示了一部分，附上完整的cookie值：
 <code>c cookie
@@ -120,7 +120,7 @@ Cookie:index_logined_hotmusic_tab=1;t_sign_auth=1; member_auth=7hjWn1eRWGaWJqK5k
 
 <p>下面截获到签到请求成功返回的数据包：</p>
 
-<p><img src="/images/post/fake_http_5.jpg" width="600" height="800"></p>
+<p>{% img /images/post/fake_http_5.jpg 600 800 %}</p>
 
 <p>到此，我们的http数据包就分析结束了，接下来就是编码的工作了,下面附上源码。</p>
 
