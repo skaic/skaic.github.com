@@ -4,7 +4,7 @@
   <title><![CDATA[Category: php | SK's Blog]]></title>
   <link href="http://sunkid.me/blog/categories/php/atom.xml" rel="self"/>
   <link href="http://sunkid.me/"/>
-  <updated>2013-12-17T16:18:18+08:00</updated>
+  <updated>2014-04-09T17:13:28+08:00</updated>
   <id>http://sunkid.me/</id>
   <author>
     <name><![CDATA[sk.c]]></name>
@@ -330,7 +330,7 @@ Warning: Illegal string offset 'field' in DatabaseCondition-&gt;__clone()
 
 <p>结果发现个很坑爹的事</p>
 
-<p>{% img /images/post/php_conf.jpg %}</p>
+<p><img src="/images/post/php_conf.jpg"></p>
 
 <p>php的info页面显示的配置文件位置和用php --ini 命令显示不同，这里php --ini显示的配置文件目录才是php真正的加载目录，
 导致我配置的时候编辑"/usr/local/ect/"目录下的php.ini一直没有生效，所以APC的模块也一直没加载到。</p>

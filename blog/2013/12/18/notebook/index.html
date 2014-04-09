@@ -3,12 +3,12 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>php配置文件加载错误(php.ini) - SK's Blog</title>
+    <title>用 vim 和 markdown 记笔记 - SK's Blog</title>
     <meta name="author" content="sk.c">
 	<meta http-equiv="cache-control" content="no-cache" >
 	<meta http-equiv="expires" content="Fri, 30 Dec 2011 12:00:00 GMT" >
     
-    <meta name="description" content="php配置文件加载错误(php.ini) 最近在编译安装APC的时候，发现php一直加载不到APC模块。在确认编译没有错误后，开始从php上找问题。 结果发现个很坑爹的事 php的info页面显示的配置文件位置和用php &#8211;ini 命令显示不同，这里php &#8211; &hellip;">
+    <meta name="description" content="用 Vim 和 Markdown 记笔记 今天介绍下 vim 上用 markdown 格式记录自己的读书笔记 :) 为什么用markdown? 可以看这里。 首先，推荐 vim-markdown 插件,源码地址在这里。 vim-markdown 的好处是支持markdown语法高亮显示, &hellip;">
     
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <link href="/atom.xml" rel="alternate" title="SK's Blog" type="application/atom+xml">
@@ -67,21 +67,44 @@
 </header>
 	
 	<div id="content" class="inner"><article class="post">
-    <h1 class="title">php配置文件加载错误(php.ini)</h1>
-    <div class="entry"><p>最近在编译安装<a href="http://pecl.php.net/package/apc">APC</a>的时候，发现php一直加载不到APC模块。在确认编译没有错误后，开始从php上找问题。</p>
+    <h1 class="title">用 Vim 和 Markdown 记笔记</h1>
+    <div class="entry"><p>今天介绍下 vim 上用 markdown 格式记录自己的读书笔记 :)</p>
 
-<p>结果发现个很坑爹的事</p>
+<p>为什么用markdown? 可以看<a href="http://jianshu.io/p/q81RER">这里</a>。</p>
 
-<p><img src="/images/post/php_conf.jpg"></p>
+<p>首先，推荐 vim-markdown 插件,源码地址在<a href="https://github.com/plasticboy/vim-markdown">这里</a>。</p>
 
-<p>php的info页面显示的配置文件位置和用php &#8211;ini 命令显示不同，这里php &#8211;ini显示的配置文件目录才是php真正的加载目录，
-导致我配置的时候编辑&#8221;/usr/local/ect/&#8221;目录下的php.ini一直没有生效，所以APC的模块也一直没加载到。</p>
+<p>vim-markdown 的好处是支持markdown语法高亮显示,并且可以快捷跳转各个段落,快捷键如下:</p>
 
-<p>而这个情况的起因原来是因为我重新configure,但没有make clean!!</p>
+<pre><code>The following work on normal and visual modes:
+]]: go to next header.
+[[: go to previous header. Contrast with ]c.
+][: go to next sibling header if any.
+[]: go to previous sibling header if any.
+]c: go to Current header.
+]u: go to parent header (Up).
+</code></pre>
 
-<h3>囧</h3>
+<p>安装好后，效果如下:</p>
 
-<p>被自己坑了。</p>
+<p><img src="/images/post/markdown.png"></p>
+
+<p>接着我们还需要 <em>快速预览</em> 功能,比较简单的做法是用 Chrome浏览器 + Markdown Preview Plus扩展。
+可以点<a href="https://chrome.google.com/webstore/detail/markdown-preview-plus/febilkbfcbhebfnokafefeacimjdckgl">这里</a>安装该扩展。</p>
+
+<p><strong>注意: 安装完扩展后,你需要打开chrome://extensions/，在设置页中勾选 “允许访问文件网址” </strong></p>
+
+<p>然后，在.vimrc 文件写入下面的映射设置, 保存重启。</p>
+
+<pre><code>"mac 版本
+map &lt;S-p&gt; :!open -a /Applications/Google\ Chrome.app/ "%:p" &lt;CR&gt;
+"windows 版本
+map &lt;S-p&gt; :!!start "C:\Program Files\Google\Chrome\Application\chrome.exe" "%:p" &lt;CR&gt;
+</code></pre>
+
+<p>现在，按 <code>Shift + p</code> 就可以打开浏览器预览了。 :)</p>
+
+<p><img src="/images/post/markdown_2.png"></p>
 </div>
     <div class="meta">
         <div class="date">
@@ -96,12 +119,12 @@
   
 
 
-<time datetime="2012-04-16T18:38:00+08:00" pubdate data-updated="true">Apr 16<span>th</span>, 2012</time></div>
+<time datetime="2013-12-18T14:23:00+08:00" pubdate data-updated="true">Dec 18<span>th</span>, 2013</time></div>
         <div class="tags">
 
 <div class="cat">
   
-    <a class='category' href='/blog/categories/php/'>php</a>
+    <a class='category' href='/blog/categories/vim/'>vim</a>
   
 </div>
 
@@ -138,8 +161,8 @@
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://sunkid.me/blog/2012/04/16/php-configuration-file-path/';
-        var disqus_url = 'http://sunkid.me/blog/2012/04/16/php-configuration-file-path/';
+        var disqus_identifier = 'http://sunkid.me/blog/2013/12/18/notebook/';
+        var disqus_url = 'http://sunkid.me/blog/2013/12/18/notebook/';
         var disqus_script = 'embed.js';
       
     (function () {

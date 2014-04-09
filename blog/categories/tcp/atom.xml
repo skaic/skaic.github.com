@@ -4,7 +4,7 @@
   <title><![CDATA[Category: tcp | SK's Blog]]></title>
   <link href="http://sunkid.me/blog/categories/tcp/atom.xml" rel="self"/>
   <link href="http://sunkid.me/"/>
-  <updated>2013-12-17T16:18:18+08:00</updated>
+  <updated>2014-04-09T17:13:28+08:00</updated>
   <id>http://sunkid.me/</id>
   <author>
     <name><![CDATA[sk.c]]></name>
@@ -27,7 +27,7 @@
 
 <h4><code>syn flood doc</code> 是基于TCP协议缺陷的。那么，我们先看下TCP三次握手的协议图</h4>
 
-<p>{% img /images/post/tcp.png %}</p>
+<p><img src="/images/post/tcp.png"></p>
 
 <p>我们看到，tcp 在初始化连接的时候，需要经过三次握手，若某客户端发送大量<code>syn</code>请求给服务端，然后不返回<code>ack</code>包。
 那么，服务端将会存在大量的syn队列(SYN_RCVD),导致占用大量服务端资源，让其他正常用户无法正常访问服务器。</p>
@@ -35,7 +35,7 @@
 <!-- more -->
 
 
-<p>{% img /images/post/tcp2.png %}</p>
+<p><img src="/images/post/tcp2.png"></p>
 
 <p>sk.c 之前想过这样的方案 <strong> 我们是否可以限制相同IP的syn请求数来解决问题？</strong></p>
 
@@ -47,7 +47,7 @@
 
 <h4>IP协议中，</h4>
 
-<p>{% img /images/post/ip.png %}</p>
+<p><img src="/images/post/ip.png"></p>
 
 <p>基于<strong>每个IP数据报头都标明(32位源IP地址)</strong>这点，我们只要在构造的 syn 包中随机的填写源IP地址, 那么就可以伪造数据来源的IP啦。</p>
 

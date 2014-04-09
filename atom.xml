@@ -4,7 +4,7 @@
   <title><![CDATA[SK's Blog]]></title>
   <link href="http://sunkid.me/atom.xml" rel="self"/>
   <link href="http://sunkid.me/"/>
-  <updated>2013-12-17T16:17:23+08:00</updated>
+  <updated>2014-04-09T17:13:28+08:00</updated>
   <id>http://sunkid.me/</id>
   <author>
     <name><![CDATA[sk.c]]></name>
@@ -12,6 +12,63 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[用 vim 和 markdown 记笔记]]></title>
+    <link href="http://sunkid.me/blog/2013/12/18/notebook/"/>
+    <updated>2013-12-18T14:23:00+08:00</updated>
+    <id>http://sunkid.me/blog/2013/12/18/notebook</id>
+    <content type="html"><![CDATA[<p>今天介绍下 vim 上用 markdown 格式记录自己的读书笔记 :)</p>
+
+<p>为什么用markdown? 可以看<a href="http://jianshu.io/p/q81RER">这里</a>。</p>
+
+<p>首先，推荐 vim-markdown 插件,源码地址在<a href="https://github.com/plasticboy/vim-markdown">这里</a>。</p>
+
+<p>vim-markdown 的好处是支持markdown语法高亮显示,并且可以快捷跳转各个段落,快捷键如下:</p>
+
+<pre><code>The following work on normal and visual modes:
+]]: go to next header.
+[[: go to previous header. Contrast with ]c.
+][: go to next sibling header if any.
+[]: go to previous sibling header if any.
+]c: go to Current header.
+]u: go to parent header (Up).
+</code></pre>
+
+<p>安装好后，效果如下:</p>
+
+<p><img src="http://sunkid.me/images/post/markdown.png"></p>
+
+<p>接着我们还需要 <em>快速预览</em> 功能,比较简单的做法是用 Chrome浏览器 + Markdown Preview Plus扩展。
+可以点<a href="https://chrome.google.com/webstore/detail/markdown-preview-plus/febilkbfcbhebfnokafefeacimjdckgl">这里</a>安装该扩展。</p>
+
+<p><strong>注意: 安装完扩展后,你需要打开chrome://extensions/，在设置页中勾选 “允许访问文件网址” </strong></p>
+
+<p>然后，在.vimrc 文件写入下面的映射设置, 保存重启。</p>
+
+<pre><code>"mac 版本
+map &lt;S-p&gt; :!open -a /Applications/Google\ Chrome.app/ "%:p" &lt;CR&gt;
+"windows 版本
+map &lt;S-p&gt; :!!start "C:\Program Files\Google\Chrome\Application\chrome.exe" "%:p" &lt;CR&gt;
+</code></pre>
+
+<p>现在，按 <code>Shift + p</code> 就可以打开浏览器预览了。 :)</p>
+
+<p><img src="http://sunkid.me/images/post/markdown_2.png"></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[php扩展练习]]></title>
+    <link href="http://sunkid.me/blog/2013/12/11/php-ext-1/"/>
+    <updated>2013-12-11T11:13:00+08:00</updated>
+    <id>http://sunkid.me/blog/2013/12/11/php-ext-1</id>
+    <content type="html"><![CDATA[<p>关于php扩展的资料已经很丰富了，你可以在<a href="http://sunkid.me/blog/2013/11/05/php-book/">这里</a>找到系统学习的资源。</p>
+
+<p>纸上得来终觉浅 绝知此事要躬行。为此创建了个练习项目来巩固上面学到的知识。
+源码放在<a href="https://github.com/skaic/sunkid_phpext">这里</a>, 希望对你也有用 :)</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Php书籍整理]]></title>
